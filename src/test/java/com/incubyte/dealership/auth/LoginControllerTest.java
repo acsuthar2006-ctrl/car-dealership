@@ -19,12 +19,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 // Security excluded — this slice test only validates the HTTP contract
-@WebMvcTest(value = AuthController.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(value = AuthController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class LoginControllerTest {
 
-    @Autowired MockMvc mockMvc;
-    @Autowired ObjectMapper objectMapper;
+    @Autowired
+    MockMvc mockMvc;
+    @Autowired
+    ObjectMapper objectMapper;
 
     @MockitoBean
     AuthService authService;
@@ -34,8 +35,8 @@ class LoginControllerTest {
         // JWT must be issued on successful login — authentication requirement
 
         // ARRANGE
-        var request  = new LoginRequest("aarya", "secret123");
-        var response = new JwtResponse("fake.jwt.token");  // token shape, not user data
+        var request = new LoginRequest("aarya", "secret123");
+        var response = new JwtResponse("fake.jwt.token"); // token shape, not user data
 
         when(authService.login(any())).thenReturn(response);
 
@@ -43,7 +44,7 @@ class LoginControllerTest {
         mockMvc.perform(post("/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isOk())                // 200 — synchronous auth
-            .andExpect(jsonPath("$.token").exists());   // JWT issued
+                .andExpect(status().isOk()) // 200 — synchronous auth
+                .andExpect(jsonPath("$.token").exists()); // JWT issued
     }
 }

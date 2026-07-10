@@ -1,6 +1,8 @@
 package com.incubyte.dealership.auth.controller;
 
 import com.incubyte.dealership.auth.dto.AuthUserResponse;
+import com.incubyte.dealership.auth.dto.JwtResponse;
+import com.incubyte.dealership.auth.dto.LoginRequest;
 import com.incubyte.dealership.auth.dto.RegisterRequest;
 import com.incubyte.dealership.auth.service.AuthService;
 import jakarta.validation.Valid;
@@ -24,4 +26,10 @@ public class AuthController {
 			.status(HttpStatus.CREATED)
 			.body(authService.register(registerRequest));
 	}
+
+	@PostMapping("/login")
+	public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest request) {
+		return ResponseEntity.ok(authService.login(request));
+	}
+
 }
