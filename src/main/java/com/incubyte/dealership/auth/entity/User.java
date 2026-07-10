@@ -32,5 +32,5 @@ public class User {
 	private Role role =  Role.USER;
 
 	@CreationTimestamp
-	LocalDateTime createdAt;
+	private LocalDateTime createdAt;
 }
