@@ -42,3 +42,64 @@ Fully implemented a stateless JWT authentication system.
 * **jjwt 0.12.3:** Used the latest JJWT library for secure token generation and validation.
 * **Stateless Sessions:** Configured Spring Security to use `SessionCreationPolicy.STATELESS` since we are relying entirely on JWTs.
 * **Bypass WebMvcTest Security:** Used `@MockitoBean` for `JwtService` and `CustomUserDetailsService` in our slice tests to prevent the test context from crashing when it attempts to load the real `SecurityConfig`.
+
+---
+
+### Module 2: Vehicle Inventory Management 🟢
+Fully implemented CRUD operations, search, purchase, and restock functionality for the vehicle inventory.
+
+**Features:**
+* `POST /vehicles`: Add a new vehicle to the inventory with default stock of 1. Returns `409 Conflict` if a vehicle with the same make and model already exists.
+* `GET /vehicles`: Retrieve a list of all vehicles in the inventory.
+* `GET /vehicles/search`: Search vehicles with dynamic filtering by make, model, category, minPrice, and maxPrice using JPA Specifications.
+* `PUT /vehicles/:id`: Update an existing vehicle's details. Returns `404 Not Found` if the vehicle doesn't exist.
+* `DELETE /vehicles/:id`: Admin-only endpoint to remove a vehicle. Returns `403 Forbidden` for non-admin users.
+* `POST /vehicles/:id/purchase`: Purchase a vehicle, decreasing its stock by 1. Returns `409 Conflict` if out of stock, `404 Not Found` if the vehicle doesn't exist.
+* `POST /vehicles/:id/restock`: Admin-only endpoint to increase vehicle stock. Validates that quantity is positive (`400 Bad Request` for negative values). Returns `403 Forbidden` for non-admin users.
+
+**Key Technical Decisions:**
+* **JPA Specifications:** Used `JpaSpecificationExecutor` and a custom `VehicleSpecification` utility class for dynamic, composable query building instead of writing multiple repository methods.
+* **Role-Based Access Control:** Leveraged `@PreAuthorize("hasRole('ADMIN')")` for admin-only endpoints (delete, restock).
+* **Custom Exceptions:** Created `VehicleNotFoundException`, `VehicleAlreadyExistsException`, and `OutOfStockException` with a centralized `GlobalExceptionHandler` for consistent error responses.
+* **Bean Validation:** Used `@Valid` with Jakarta validation annotations on DTOs (`VehicleRequest`, `RestockRequest`) for input validation.
+
+---
+
+## 🤖 AI Usage
+
+This project leverages AI coding assistants as pair programming partners throughout the development process.
+
+| Module | AI Tool Used | Level of AI Involvement |
+|---|---|---|
+| Module 1: Auth & Security | Google Gemini | Light — AI guided architecture and helped troubleshoot integration issues |
+| Module 2: Vehicle Inventory | Google Gemini + Claude | Moderate — AI assisted with TDD flow, code generation, and refactoring while I drove the design and requirements |
+
+**How AI was used in Module 2:**
+* I provided the test cases and requirements; AI helped implement them following the strict RED-GREEN-REFACTOR TDD cycle
+* AI assisted with boilerplate code generation and refactoring passes
+* I made all design decisions — duplicate detection strategy, stock defaults, role-based access, exception handling approach
+* I reviewed, approved, and guided every commit — nothing was merged without my explicit approval
+
+---
+
+## 🐛 Mistakes & Learnings
+
+### 1. Vehicle Duplication Confusion
+When adding vehicles, I initially didn't account for duplicate entries. When two vehicles with the same make and model were added, it just created duplicates in the database. I was confused about what should define a "duplicate" — should it be based on make only? Model only? Both? After discussing, I decided that **make + model** together should be unique, and implemented `existsByMakeIgnoreCaseAndModelIgnoreCase()` in the repository with a custom `VehicleAlreadyExistsException`.
+
+**Learning:** Always define your uniqueness constraints upfront before writing code. Business rules around duplicates should be decided early.
+
+### 2. Spring Security `ROLE_` Prefix Gotcha
+The `@PreAuthorize("hasRole('ADMIN')")` annotation wasn't working — admin users were getting `403 Forbidden`. Turns out Spring Security automatically prepends `ROLE_` to role names when using `hasRole()`. So the database needed to store `ROLE_ADMIN`, not just `ADMIN`. This took a while to debug.
+
+**Learning:** Spring Security's `hasRole()` adds the `ROLE_` prefix internally. Either store roles with the prefix or use `hasAuthority()` instead.
+
+### 3. Search Parameter Design Indecision
+For the `/vehicles/search` endpoint, I kept going back and forth on whether the `make` parameter should be required or optional. First I made it required, then realized price-range-only searches wouldn't work, so I switched all params to `required = false`. This led to multiple amend commits.
+
+**Learning:** Think through all the use cases of an endpoint before implementing. A search endpoint should almost always have optional parameters to allow flexible querying.
+
+### 4. Understanding the TDD Rhythm
+Initially, I found it awkward to intentionally write code that fails. The idea of committing broken code (RED state) felt wrong. But over time, I realized the RED commit is proof that the test actually validates something — if it passes without implementation, the test is useless.
+
+**Learning:** The RED step is the most important step in TDD. It proves your test has value.
