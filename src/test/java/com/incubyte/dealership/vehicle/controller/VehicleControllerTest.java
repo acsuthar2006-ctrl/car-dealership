@@ -84,4 +84,16 @@ class VehicleControllerTest {
 				.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isBadRequest());
 	}
+
+	@Test
+	void addVehicle_withNegativeStock_returns400BadRequest() throws Exception {
+		// ARRANGE: Negative stock
+		var request = new VehicleRequest("Toyota", "Camry", "SEDAN", 25000.0, -1);
+
+		// ACT + ASSERT
+		mockMvc.perform(post(VEHICLES_ENDPOINT)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request)))
+			.andExpect(status().isBadRequest());
+	}
 }
