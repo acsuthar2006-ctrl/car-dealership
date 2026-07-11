@@ -20,12 +20,12 @@ public class VehicleService {
     @Transactional
     public VehicleResponse addVehicle(VehicleRequest request) {
         Vehicle vehicle = Vehicle.builder()
-            .make(request.make())
-            .model(request.model())
-            .category(request.category())
-            .price(request.price())
-            .quantityInStock(request.quantityInStock())
-            .build();
+                .make(request.make())
+                .model(request.model())
+                .category(request.category())
+                .price(request.price())
+                .quantityInStock(request.quantityInStock())
+                .build();
 
         Vehicle saved = vehicleRepository.save(vehicle);
 
@@ -45,7 +45,6 @@ public class VehicleService {
                 vehicle.getModel(),
                 vehicle.getCategory(),
                 vehicle.getPrice(),
-                vehicle.getQuantityInStock()
-        );
+                vehicle.getQuantityInStock());
     }
 }

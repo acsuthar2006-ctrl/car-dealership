@@ -25,7 +25,8 @@ public class JwtFilterChain extends OncePerRequestFilter {
 	private final CustomUserDetailsService customUserDetailsService;
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
 
 		String authHeader = request.getHeader("Authorization");
 		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -38,7 +39,7 @@ public class JwtFilterChain extends OncePerRequestFilter {
 		try {
 			username = jwtService.getUsernameFromToken(token);
 
-		}  catch (Exception e) {
+		} catch (Exception e) {
 			// Token is expired, malformed, or invalid — skip authentication
 			// and let the request continue unauthenticated.
 			// Public endpoints (permitAll) will still work fine.
@@ -47,7 +48,7 @@ public class JwtFilterChain extends OncePerRequestFilter {
 			return;
 		}
 
-		if  (username == null) {
+		if (username == null) {
 			filterChain.doFilter(request, response);
 			return;
 		}
@@ -59,12 +60,10 @@ public class JwtFilterChain extends OncePerRequestFilter {
 			return;
 		}
 
-		UsernamePasswordAuthenticationToken authentication =
-			new UsernamePasswordAuthenticationToken(
+		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
 				userDetails,
 				null,
-				userDetails.getAuthorities()
-			);
+				userDetails.getAuthorities());
 		authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 

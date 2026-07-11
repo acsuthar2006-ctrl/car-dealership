@@ -117,4 +117,22 @@ class VehicleControllerTest {
 				.andExpect(jsonPath("$.size()").value(1))
 				.andExpect(jsonPath("$[0].make").value("Ford"));
 	}
+
+	@Test
+	@WithMockUser
+	void updateVehicle_withValidPayload_returns200Ok() throws Exception {
+		// ARRANGE
+		UUID id = UUID.randomUUID();
+		var request = new VehicleRequest("Honda", "Accord", "SEDAN", 27000.00, 10);
+		var response = new VehicleResponse(id, "Honda", "Accord", "SEDAN", 27000.00, 10);
+
+		when(vehicleService.updateVehicle(id, request)).thenReturn(response);
+
+		// ACT + ASSERT
+		mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put(VEHICLES_ENDPOINT + "/" + id)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.make").value("Honda"));
+	}
 }
