@@ -50,7 +50,14 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(com.incubyte.dealership.vehicle.exception.VehicleAlreadyExistsException.class)
-	public ResponseEntity<Map<String, String>> handleVehicleAlreadyExistsException(com.incubyte.dealership.vehicle.exception.VehicleAlreadyExistsException ex) {
+	public ResponseEntity<Map<String, String>> handleVehicleAlreadyExistsException(
+			com.incubyte.dealership.vehicle.exception.VehicleAlreadyExistsException ex) {
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", ex.getMessage()));
+	}
+
+	@ExceptionHandler(com.incubyte.dealership.vehicle.exception.OutOfStockException.class)
+	public ResponseEntity<Map<String, String>> handleOutOfStockException(
+			com.incubyte.dealership.vehicle.exception.OutOfStockException ex) {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", ex.getMessage()));
 	}
 }
