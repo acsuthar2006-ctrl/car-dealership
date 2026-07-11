@@ -1,5 +1,6 @@
 package com.incubyte.dealership.shared.exception;
 
+import com.incubyte.dealership.auth.exception.InvalidCredentialsException;
 import com.incubyte.dealership.vehicle.exception.VehicleNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,11 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(BadCredentialsException.class)
 	public ResponseEntity<Map<String, String>> handleBadCredentialsException(BadCredentialsException ex) {
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", ex.getMessage()));
+	}
+
+	@ExceptionHandler(InvalidCredentialsException.class)
+	public ResponseEntity<Map<String, String>> handleInvalidCredentialsException(InvalidCredentialsException ex) {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", ex.getMessage()));
 	}
 

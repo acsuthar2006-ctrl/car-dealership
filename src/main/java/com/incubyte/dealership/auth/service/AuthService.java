@@ -6,6 +6,7 @@ import com.incubyte.dealership.auth.dto.LoginRequest;
 import com.incubyte.dealership.auth.dto.RegisterRequest;
 import com.incubyte.dealership.auth.entity.Role;
 import com.incubyte.dealership.auth.entity.User;
+import com.incubyte.dealership.auth.exception.InvalidCredentialsException;
 import com.incubyte.dealership.auth.repository.UserRepository;
 import com.incubyte.dealership.shared.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -42,11 +43,11 @@ public class AuthService {
 
 	public JwtResponse login(LoginRequest request) {
 		User user = userRepository.findByUsername(request.username())
-				.orElseThrow(() -> new RuntimeException("Invalid credentials"));
+				.orElseThrow(() -> new InvalidCredentialsException());
 
 		if (!passwordEncoder.matches(request.password(), user.getPassword())) {
 			log.warn("Invalid password attempt for username: {}", request.username());
-			throw new RuntimeException("Invalid credentials");
+			throw new InvalidCredentialsException();
 		}
 
 		String token = jwtService.generateToken(user);
