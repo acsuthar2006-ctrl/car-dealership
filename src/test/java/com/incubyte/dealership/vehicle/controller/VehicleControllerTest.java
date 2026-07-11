@@ -32,6 +32,7 @@ import com.incubyte.dealership.shared.security.JwtFilterChain;
 class VehicleControllerTest {
 
 	private static final String VEHICLES_ENDPOINT = "/vehicles";
+	private static final String SEARCH_ENDPOINT = "/vehicles/search";
 
 	@Autowired
 	MockMvc mockMvc;
@@ -141,6 +142,31 @@ class VehicleControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.size()").value(1))
 				.andExpect(jsonPath("$[0].make").value("Honda"));
+	}
+
+	@Test
+	@WithMockUser
+	void searchVehicles_byMake_returns200AndFilteredResults() throws Exception {
+		var response = new VehicleResponse(UUID.randomUUID(), "Toyota", "Camry", "SEDAN", 25000.0, 5);
+		when(vehicleService.searchVehicles("Toyota", null, null, null, null))
+				.thenReturn(java.util.List.of(response));
+
+		mockMvc.perform(get(SEARCH_ENDPOINT + "?make=Toyota"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.size()").value(1))
+				.andExpect(jsonPath("$[0].make").value("Toyota"));
+	}
+
+	@Test
+	@WithMockUser
+	void searchVehicles_byPriceRange_returns200AndFilteredResults() throws Exception {
+		var response = new VehicleResponse(UUID.randomUUID(), "Honda", "Civic", "SEDAN", 23000.0, 8);
+		when(vehicleService.searchVehicles(null, null, null, 20000.0, 30000.0))
+				.thenReturn(java.util.List.of(response));
+
+		mockMvc.perform(get(SEARCH_ENDPOINT + "?minPrice=20000&maxPrice=30000"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.size()").value(1));
 	}
 
 	@Test
