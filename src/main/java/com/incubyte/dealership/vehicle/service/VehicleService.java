@@ -39,7 +39,15 @@ public class VehicleService {
         );
     }
 
-    public List<VehicleResponse> getVehicles() {
-        return List.of();
+    public java.util.List<VehicleResponse> getVehicles() {
+        return vehicleRepository.findAll().stream()
+                .map(vehicle -> new VehicleResponse(
+                        vehicle.getId(),
+                        vehicle.getMake(),
+                        vehicle.getModel(),
+                        vehicle.getCategory(),
+                        vehicle.getPrice(),
+                        vehicle.getQuantityInStock()))
+                .toList();
     }
 }

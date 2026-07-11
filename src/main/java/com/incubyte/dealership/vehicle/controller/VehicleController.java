@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/vehicles")
 @RequiredArgsConstructor
@@ -21,5 +23,10 @@ public class VehicleController {
     @PostMapping
     public ResponseEntity<VehicleResponse> addVehicle(@Valid @RequestBody VehicleRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(vehicleService.addVehicle(request));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<VehicleResponse>> getVehicles() {
+        return ResponseEntity.ok(vehicleService.getVehicles());
     }
 }
