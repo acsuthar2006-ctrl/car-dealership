@@ -199,6 +199,36 @@ class VehicleControllerTest {
 
 	@Test
 	@WithMockUser
+	void purchaseVehicle_withOutOfStock_returns409Conflict() throws Exception {
+		// ARRANGE
+		UUID vehicleId = UUID.randomUUID();
+
+		when(vehicleService.purchaseVehicle(vehicleId))
+				.thenThrow(new com.incubyte.dealership.vehicle.exception.OutOfStockException(vehicleId));
+
+		// ACT + ASSERT
+		mockMvc.perform(post(PURCHASE_ENDPOINT + "/" + vehicleId + "/purchase"))
+				.andExpect(status().isConflict())
+				.andExpect(jsonPath("$.error").exists());
+	}
+
+	@Test
+	@WithMockUser
+	void purchaseVehicle_withNonExistentId_returns404NotFound() throws Exception {
+		// ARRANGE
+		UUID nonExistentId = UUID.randomUUID();
+
+		when(vehicleService.purchaseVehicle(nonExistentId))
+				.thenThrow(new com.incubyte.dealership.vehicle.exception.VehicleNotFoundException(nonExistentId));
+
+		// ACT + ASSERT
+		mockMvc.perform(post(PURCHASE_ENDPOINT + "/" + nonExistentId + "/purchase"))
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.error").exists());
+	}
+
+	@Test
+	@WithMockUser
 	void updateVehicle_withValidPayload_returns200Ok() throws Exception {
 		// ARRANGE
 		UUID id = UUID.randomUUID();
