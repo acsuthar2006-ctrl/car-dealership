@@ -17,6 +17,8 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -129,10 +131,28 @@ class VehicleControllerTest {
 		when(vehicleService.updateVehicle(id, request)).thenReturn(response);
 
 		// ACT + ASSERT
-		mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put(VEHICLES_ENDPOINT + "/" + id)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
+		mockMvc.perform(
+				org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put(VEHICLES_ENDPOINT + "/" + id)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.make").value("Honda"));
+	}
+
+	@Test
+	@WithMockUser
+	void updateVehicle_withNonExistentId_returns404NotFound() throws Exception {
+		// ARRANGE
+		UUID nonExistentId = UUID.randomUUID();
+		var request = new VehicleRequest("Honda", "Accord", "SEDAN", 27000.00, 10);
+
+		when(vehicleService.updateVehicle(nonExistentId, request))
+				.thenThrow(new com.incubyte.dealership.vehicle.exception.VehicleNotFoundException(nonExistentId));
+
+		// ACT + ASSERT
+		mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put(VEHICLES_ENDPOINT + "/" + nonExistentId)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isNotFound());
 	}
 }
