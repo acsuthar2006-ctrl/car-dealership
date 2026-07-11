@@ -1,5 +1,6 @@
 package com.incubyte.dealership.shared.exception;
 
+import com.incubyte.dealership.vehicle.exception.VehicleNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,8 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(DataIntegrityViolationException.class)
-	public ResponseEntity<Map<String, String>> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+	public ResponseEntity<Map<String, String>> handleDataIntegrityViolationException(
+			DataIntegrityViolationException ex) {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "Username or email already exists"));
 	}
 
@@ -35,5 +37,9 @@ public class GlobalExceptionHandler {
 		});
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
 	}
-}
 
+	@ExceptionHandler(VehicleNotFoundException.class)
+	public ResponseEntity<Map<String, String>> handleVehicleNotFoundException(VehicleNotFoundException ex) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage()));
+	}
+}

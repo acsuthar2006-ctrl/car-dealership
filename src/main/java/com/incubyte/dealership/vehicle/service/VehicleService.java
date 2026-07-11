@@ -3,6 +3,7 @@ package com.incubyte.dealership.vehicle.service;
 import com.incubyte.dealership.vehicle.dto.VehicleRequest;
 import com.incubyte.dealership.vehicle.dto.VehicleResponse;
 import com.incubyte.dealership.vehicle.entity.Vehicle;
+import com.incubyte.dealership.vehicle.exception.VehicleNotFoundException;
 import com.incubyte.dealership.vehicle.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,14 +42,15 @@ public class VehicleService {
 
     @Transactional
     public VehicleResponse updateVehicle(UUID id, VehicleRequest request) {
-        Vehicle vehicle = Vehicle.builder()
-                .id(id)
-                .make(request.make())
-                .model(request.model())
-                .category(request.category())
-                .price(request.price())
-                .quantityInStock(request.quantityInStock())
-                .build();
+        Vehicle vehicle = vehicleRepository.findById(id)
+                .orElseThrow(() -> new VehicleNotFoundException(id));
+
+        vehicle.setMake(request.make());
+        vehicle.setModel(request.model());
+        vehicle.setCategory(request.category());
+        vehicle.setPrice(request.price());
+        vehicle.setQuantityInStock(request.quantityInStock());
+
         Vehicle saved = vehicleRepository.save(vehicle);
         return mapToResponse(saved);
     }
