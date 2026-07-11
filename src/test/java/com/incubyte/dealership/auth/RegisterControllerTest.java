@@ -24,6 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(value = AuthController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class RegisterControllerTest {
 
+	private static final String REGISTER_ENDPOINT = "/auth/register";
+
 	@Autowired
 	MockMvc mockMvc;
 	@Autowired
@@ -49,7 +51,7 @@ class RegisterControllerTest {
         when(authService.register(any())).thenReturn(response);
 
         // ACT + ASSERT
-        mockMvc.perform(post("/auth/register")
+        mockMvc.perform(post(REGISTER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated()) // 201
@@ -64,7 +66,7 @@ class RegisterControllerTest {
         when(authService.register(any())).thenThrow(new org.springframework.dao.DataIntegrityViolationException("Duplicate key"));
 
         // ACT + ASSERT
-        mockMvc.perform(post("/auth/register")
+        mockMvc.perform(post(REGISTER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isConflict()); // 409
@@ -77,7 +79,7 @@ class RegisterControllerTest {
 		when(authService.register(any())).thenThrow(new org.springframework.dao.DataIntegrityViolationException("Invalid email"));
 
         // ACT + ASSERT
-        mockMvc.perform(post("/auth/register")
+        mockMvc.perform(post(REGISTER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())

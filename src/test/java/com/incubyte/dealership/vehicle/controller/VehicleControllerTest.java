@@ -1,7 +1,6 @@
-package com.incubyte.dealership.controller;
+package com.incubyte.dealership.vehicle.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.incubyte.dealership.vehicle.controller.VehicleController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -24,6 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(value = VehicleController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class VehicleControllerTest {
+
+	private static final String VEHICLES_ENDPOINT = "/vehicles";
 
 	@Autowired
 	MockMvc mockMvc;
@@ -50,7 +51,7 @@ class VehicleControllerTest {
 		when(vehicleService.addVehicle(any())).thenReturn(response);
 
 		// ACT + ASSERT
-		mockMvc.perform(post("/vehicles")
+		mockMvc.perform(post(VEHICLES_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isCreated())
@@ -66,7 +67,7 @@ class VehicleControllerTest {
 		var request = new VehicleRequest("Toyota", "Camry", "SEDAN", -10000.0, 5);
 
 		// ACT + ASSERT
-		mockMvc.perform(post("/vehicles")
+		mockMvc.perform(post(VEHICLES_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isBadRequest());

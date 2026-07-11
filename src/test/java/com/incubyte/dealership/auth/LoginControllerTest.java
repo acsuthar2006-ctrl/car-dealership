@@ -24,6 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(value = AuthController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class LoginControllerTest {
 
+    private static final String LOGIN_ENDPOINT = "/auth/login";
+
     @Autowired
     MockMvc mockMvc;
     @Autowired
@@ -49,7 +51,7 @@ class LoginControllerTest {
         when(authService.login(any())).thenReturn(response);
 
         // ACT + ASSERT
-        mockMvc.perform(post("/auth/login")
+        mockMvc.perform(post(LOGIN_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk()) // 200 — synchronous auth
@@ -63,7 +65,7 @@ class LoginControllerTest {
         when(authService.login(any())).thenThrow(new org.springframework.security.authentication.BadCredentialsException("Bad credentials"));
 
         // ACT + ASSERT
-        mockMvc.perform(post("/auth/login")
+        mockMvc.perform(post(LOGIN_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnauthorized()); // 401
@@ -75,7 +77,7 @@ class LoginControllerTest {
         var request = new LoginRequest("", "");
 
         // ACT + ASSERT
-        mockMvc.perform(post("/auth/login")
+        mockMvc.perform(post(LOGIN_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
