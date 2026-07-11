@@ -171,6 +171,17 @@ class VehicleControllerTest {
 
 	@Test
 	@WithMockUser
+	void searchVehicles_withNoMatches_returns200AndEmptyList() throws Exception {
+		when(vehicleService.searchVehicles("NonExistent", null, null, null, null))
+				.thenReturn(java.util.List.of());
+
+		mockMvc.perform(get(SEARCH_ENDPOINT + "?make=NonExistent"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.size()").value(0));
+	}
+
+	@Test
+	@WithMockUser
 	void updateVehicle_withValidPayload_returns200Ok() throws Exception {
 		// ARRANGE
 		UUID id = UUID.randomUUID();
