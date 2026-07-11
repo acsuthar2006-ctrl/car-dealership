@@ -16,11 +16,9 @@ import com.incubyte.dealership.shared.security.CustomUserDetailsService;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doNothing;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.springframework.context.annotation.Import;
@@ -154,5 +152,17 @@ class VehicleControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	@WithMockUser(roles = "ADMIN")
+	void deleteVehicle_asAdmin_returns204NoContent() throws Exception {
+		// ARRANGE
+		UUID id = UUID.randomUUID();
+		doNothing().when(vehicleService).deleteVehicle(id);
+
+		// ACT + ASSERT
+		mockMvc.perform(delete(VEHICLES_ENDPOINT + "/" + id))
+				.andExpect(status().isNoContent());
 	}
 }
