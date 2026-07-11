@@ -180,6 +180,23 @@ class VehicleControllerTest {
 				.andExpect(jsonPath("$.size()").value(0));
 	}
 
+	private static final String PURCHASE_ENDPOINT = "/vehicles";
+
+	@Test
+	@WithMockUser
+	void purchaseVehicle_withAvailableStock_returns200AndDecreasesQuantity() throws Exception {
+		// ARRANGE
+		UUID vehicleId = UUID.randomUUID();
+		var response = new VehicleResponse(vehicleId, "Toyota", "Camry", "SEDAN", 25000.00, 4);
+
+		when(vehicleService.purchaseVehicle(vehicleId)).thenReturn(response);
+
+		// ACT + ASSERT
+		mockMvc.perform(post(PURCHASE_ENDPOINT + "/" + vehicleId + "/purchase"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.quantityInStock").value(4)); // Decreased from 5 to 4
+	}
+
 	@Test
 	@WithMockUser
 	void updateVehicle_withValidPayload_returns200Ok() throws Exception {
