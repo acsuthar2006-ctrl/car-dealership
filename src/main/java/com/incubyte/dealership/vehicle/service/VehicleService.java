@@ -29,25 +29,23 @@ public class VehicleService {
 
         Vehicle saved = vehicleRepository.save(vehicle);
 
-        return new VehicleResponse(
-            saved.getId(),
-            saved.getMake(),
-            saved.getModel(),
-            saved.getCategory(),
-            saved.getPrice(),
-            saved.getQuantityInStock()
-        );
+        return mapToResponse(saved);
     }
 
     public java.util.List<VehicleResponse> getVehicles() {
         return vehicleRepository.findAll().stream()
-                .map(vehicle -> new VehicleResponse(
-                        vehicle.getId(),
-                        vehicle.getMake(),
-                        vehicle.getModel(),
-                        vehicle.getCategory(),
-                        vehicle.getPrice(),
-                        vehicle.getQuantityInStock()))
+                .map(this::mapToResponse)
                 .toList();
+    }
+
+    private VehicleResponse mapToResponse(Vehicle vehicle) {
+        return new VehicleResponse(
+                vehicle.getId(),
+                vehicle.getMake(),
+                vehicle.getModel(),
+                vehicle.getCategory(),
+                vehicle.getPrice(),
+                vehicle.getQuantityInStock()
+        );
     }
 }
