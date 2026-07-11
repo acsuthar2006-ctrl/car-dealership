@@ -48,4 +48,9 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<Map<String, String>> handleVehicleNotFoundException(VehicleNotFoundException ex) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage()));
 	}
+
+	@ExceptionHandler(com.incubyte.dealership.vehicle.exception.VehicleAlreadyExistsException.class)
+	public ResponseEntity<Map<String, String>> handleVehicleAlreadyExistsException(com.incubyte.dealership.vehicle.exception.VehicleAlreadyExistsException ex) {
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", ex.getMessage()));
+	}
 }

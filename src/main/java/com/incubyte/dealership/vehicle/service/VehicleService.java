@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+import com.incubyte.dealership.vehicle.exception.VehicleAlreadyExistsException;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -21,12 +23,16 @@ public class VehicleService {
 
     @Transactional
     public VehicleResponse addVehicle(VehicleRequest request) {
+        if (vehicleRepository.existsByMakeIgnoreCaseAndModelIgnoreCase(request.make(), request.model())) {
+            throw new VehicleAlreadyExistsException(request.make(), request.model());
+        }
+
         Vehicle vehicle = Vehicle.builder()
                 .make(request.make())
                 .model(request.model())
                 .category(request.category())
                 .price(request.price())
-                .quantityInStock(request.quantityInStock())
+                .quantityInStock(1)
                 .build();
 
         Vehicle saved = vehicleRepository.save(vehicle);
@@ -49,7 +55,6 @@ public class VehicleService {
         vehicle.setModel(request.model());
         vehicle.setCategory(request.category());
         vehicle.setPrice(request.price());
-        vehicle.setQuantityInStock(request.quantityInStock());
 
         Vehicle saved = vehicleRepository.save(vehicle);
         return mapToResponse(saved);
