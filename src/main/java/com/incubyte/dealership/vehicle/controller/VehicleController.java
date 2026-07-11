@@ -62,6 +62,7 @@ public class VehicleController {
     }
 
     @PostMapping("/{id}/restock")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<VehicleResponse> restockVehicle(
             @PathVariable java.util.UUID id,
             @RequestBody com.incubyte.dealership.vehicle.dto.RestockRequest request) {
