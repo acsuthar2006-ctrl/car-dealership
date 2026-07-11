@@ -1,22 +1,28 @@
-package com.incubyte.dealership.inventory.controller;
+package com.incubyte.dealership.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.incubyte.dealership.vehicle.controller.VehicleController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import com.incubyte.dealership.inventory.dto.VehicleRequest;
-import com.incubyte.dealership.inventory.dto.VehicleResponse;
-import com.incubyte.dealership.inventory.service.VehicleService;
+import com.incubyte.dealership.vehicle.dto.VehicleRequest;
+import com.incubyte.dealership.vehicle.dto.VehicleResponse;
+import com.incubyte.dealership.vehicle.service.VehicleService;
+import com.incubyte.dealership.shared.security.JwtService;
+import com.incubyte.dealership.shared.security.CustomUserDetailsService;
+
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(VehicleController.class)
+@WebMvcTest(value =     VehicleController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class VehicleControllerTest {
 
 	@Autowired
@@ -28,22 +34,29 @@ class VehicleControllerTest {
 	@MockitoBean
 	VehicleService vehicleService;
 
+    @MockitoBean
+    JwtService jwtService;
+
+    @MockitoBean
+    CustomUserDetailsService customUserDetailsService;
+
 	@Test
 	void addVehicle_withValidPayload_returns201Created() throws Exception {
 		// ARRANGE
 		var request = new VehicleRequest("Toyota", "Camry", "SEDAN", 25000.00, 5);
-		var response = new VehicleResponse(1L, "Toyota", "Camry", "SEDAN", 25000.00, 5);
+        UUID vehicleId = UUID.randomUUID();
+		var response = new VehicleResponse(vehicleId, "Toyota", "Camry", "SEDAN", 25000.00, 5);
 
 		when(vehicleService.addVehicle(any())).thenReturn(response);
 
 		// ACT + ASSERT
-		mockMvc.perform(post("/auth/vehicles")
+		mockMvc.perform(post("/vehicles")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
-			.andExpect(status().isCreated())   // 201
+			.andExpect(status().isCreated())
 			.andExpect(jsonPath("$.id").exists())
-			.andExpect(jsonPath("$.brand").value("Toyota"))
+			.andExpect(jsonPath("$.make").value("Toyota"))
 			.andExpect(jsonPath("$.model").value("Camry"))
-			.andExpect(jsonPath("$.type").value("SEDAN"));
+			.andExpect(jsonPath("$.category").value("SEDAN"));
 	}
 }
