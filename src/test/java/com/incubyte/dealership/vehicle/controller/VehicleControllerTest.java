@@ -109,8 +109,6 @@ class VehicleControllerTest {
 				.andExpect(status().isBadRequest());
 	}
 
-
-
 	@Test
 	@WithMockUser
 	void getVehicles_returns200AndListOfVehicles() throws Exception {
@@ -123,6 +121,26 @@ class VehicleControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.size()").value(1))
 				.andExpect(jsonPath("$[0].make").value("Ford"));
+	}
+
+	@Test
+	@WithMockUser
+	void searchVehicles_withCriteria_returnsMatchingVehicles() throws Exception {
+		// ARRANGE
+		var response = new VehicleResponse(UUID.randomUUID(), "Honda", "Civic", "SEDAN", 20000.0, 5);
+		when(vehicleService.searchVehicles("Honda", "Civic", "SEDAN", 15000.0, 25000.0))
+				.thenReturn(java.util.List.of(response));
+
+		// ACT + ASSERT
+		mockMvc.perform(get(VEHICLES_ENDPOINT + "/search")
+				.param("make", "Honda")
+				.param("model", "Civic")
+				.param("category", "SEDAN")
+				.param("minPrice", "15000.0")
+				.param("maxPrice", "25000.0"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.size()").value(1))
+				.andExpect(jsonPath("$[0].make").value("Honda"));
 	}
 
 	@Test
