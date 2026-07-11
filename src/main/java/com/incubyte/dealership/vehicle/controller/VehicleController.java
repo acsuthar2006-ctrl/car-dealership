@@ -38,6 +38,7 @@ public class VehicleController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteVehicle(@PathVariable java.util.UUID id) {
         vehicleService.deleteVehicle(id);
         return ResponseEntity.noContent().build();
