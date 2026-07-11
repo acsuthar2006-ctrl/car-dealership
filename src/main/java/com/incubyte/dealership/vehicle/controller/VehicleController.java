@@ -65,7 +65,7 @@ public class VehicleController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<VehicleResponse> restockVehicle(
             @PathVariable java.util.UUID id,
-            @RequestBody com.incubyte.dealership.vehicle.dto.RestockRequest request) {
+            @Valid @RequestBody com.incubyte.dealership.vehicle.dto.RestockRequest request) {
         return ResponseEntity.ok(vehicleService.restockVehicle(id, request));
     }
 }

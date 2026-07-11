@@ -95,13 +95,11 @@ public class VehicleService {
 
     @Transactional
     public VehicleResponse restockVehicle(UUID id, com.incubyte.dealership.vehicle.dto.RestockRequest request) {
-        Vehicle vehicle = vehicleRepository.findById(id).orElse(null);
-        if (vehicle != null) {
-            vehicle.setQuantityInStock(vehicle.getQuantityInStock() + request.quantity());
-            Vehicle saved = vehicleRepository.save(vehicle);
-            return mapToResponse(saved);
-        }
-        return null;
+        Vehicle vehicle = vehicleRepository.findById(id)
+                .orElseThrow(() -> new VehicleNotFoundException(id));
+        vehicle.setQuantityInStock(vehicle.getQuantityInStock() + request.quantity());
+        Vehicle saved = vehicleRepository.save(vehicle);
+        return mapToResponse(saved);
     }
 
     private VehicleResponse mapToResponse(Vehicle vehicle) {
