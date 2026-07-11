@@ -3,7 +3,6 @@ package com.incubyte.dealership.vehicle.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
@@ -19,6 +18,7 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.springframework.context.annotation.Import;
@@ -27,7 +27,7 @@ import com.incubyte.dealership.shared.config.SecurityConfig;
 import com.incubyte.dealership.shared.security.JwtFilterChain;
 
 @WebMvcTest(VehicleController.class)
-@Import({SecurityConfig.class, JwtFilterChain.class})
+@Import({ SecurityConfig.class, JwtFilterChain.class })
 @WithMockUser
 class VehicleControllerTest {
 
@@ -61,11 +61,11 @@ class VehicleControllerTest {
 		mockMvc.perform(post(VEHICLES_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
-			.andExpect(status().isCreated())
-			.andExpect(jsonPath("$.id").exists())
-			.andExpect(jsonPath("$.make").value("Toyota"))
-			.andExpect(jsonPath("$.model").value("Camry"))
-			.andExpect(jsonPath("$.category").value("SEDAN"));
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.id").exists())
+				.andExpect(jsonPath("$.make").value("Toyota"))
+				.andExpect(jsonPath("$.model").value("Camry"))
+				.andExpect(jsonPath("$.category").value("SEDAN"));
 	}
 
 	@Test
@@ -77,7 +77,7 @@ class VehicleControllerTest {
 		mockMvc.perform(post(VEHICLES_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
-			.andExpect(status().isBadRequest());
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -89,7 +89,7 @@ class VehicleControllerTest {
 		mockMvc.perform(post(VEHICLES_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
-			.andExpect(status().isBadRequest());
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -101,6 +101,20 @@ class VehicleControllerTest {
 		mockMvc.perform(post(VEHICLES_ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
-			.andExpect(status().isBadRequest());
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	@WithMockUser
+	void getVehicles_returns200AndListOfVehicles() throws Exception {
+		// ARRANGE
+		var response = new VehicleResponse(UUID.randomUUID(), "Ford", "Mustang", "COUPE", 45000.0, 2);
+		when(vehicleService.getVehicles()).thenReturn(java.util.List.of(response));
+
+		// ACT + ASSERT
+		mockMvc.perform(get(VEHICLES_ENDPOINT))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.size()").value(1))
+			.andExpect(jsonPath("$[0].make").value("Ford"));
 	}
 }
