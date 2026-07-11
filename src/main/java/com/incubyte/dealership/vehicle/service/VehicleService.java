@@ -39,19 +39,18 @@ public class VehicleService {
                 .toList();
     }
 
-
     @Transactional
     public VehicleResponse updateVehicle(UUID id, VehicleRequest request) {
-        Vehicle vehicle = vehicleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Vehicle not found with id: " + id));
-
-        vehicle.setMake(request.make());
-        vehicle.setModel(request.model());
-        vehicle.setCategory(request.category());
-        vehicle.setPrice(request.price());
-        vehicle.setQuantityInStock(request.quantityInStock());
-
-        return mapToResponse(vehicleRepository.save(vehicle));
+        Vehicle vehicle = Vehicle.builder()
+                .id(id)
+                .make(request.make())
+                .model(request.model())
+                .category(request.category())
+                .price(request.price())
+                .quantityInStock(request.quantityInStock())
+                .build();
+        Vehicle saved = vehicleRepository.save(vehicle);
+        return mapToResponse(saved);
     }
 
     private VehicleResponse mapToResponse(Vehicle vehicle) {
