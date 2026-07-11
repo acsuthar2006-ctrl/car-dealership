@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(value =     VehicleController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(value = VehicleController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class VehicleControllerTest {
 
 	@Autowired
@@ -34,17 +34,17 @@ class VehicleControllerTest {
 	@MockitoBean
 	VehicleService vehicleService;
 
-    @MockitoBean
-    JwtService jwtService;
+	@MockitoBean
+	JwtService jwtService;
 
-    @MockitoBean
-    CustomUserDetailsService customUserDetailsService;
+	@MockitoBean
+	CustomUserDetailsService customUserDetailsService;
 
 	@Test
 	void addVehicle_withValidPayload_returns201Created() throws Exception {
 		// ARRANGE
 		var request = new VehicleRequest("Toyota", "Camry", "SEDAN", 25000.00, 5);
-        UUID vehicleId = UUID.randomUUID();
+		UUID vehicleId = UUID.randomUUID();
 		var response = new VehicleResponse(vehicleId, "Toyota", "Camry", "SEDAN", 25000.00, 5);
 
 		when(vehicleService.addVehicle(any())).thenReturn(response);
@@ -58,5 +58,17 @@ class VehicleControllerTest {
 			.andExpect(jsonPath("$.make").value("Toyota"))
 			.andExpect(jsonPath("$.model").value("Camry"))
 			.andExpect(jsonPath("$.category").value("SEDAN"));
+	}
+
+	@Test
+	void addVehicle_withNegativePrice_returns400BadRequest() throws Exception {
+		// ARRANGE
+		var request = new VehicleRequest("Toyota", "Camry", "SEDAN", -10000.0, 5);
+
+		// ACT + ASSERT
+		mockMvc.perform(post("/vehicles")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request)))
+			.andExpect(status().isBadRequest());
 	}
 }

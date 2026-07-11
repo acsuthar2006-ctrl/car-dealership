@@ -3,7 +3,6 @@ package com.incubyte.dealership.vehicle.controller;
 import com.incubyte.dealership.vehicle.dto.VehicleRequest;
 import com.incubyte.dealership.vehicle.dto.VehicleResponse;
 import com.incubyte.dealership.vehicle.service.VehicleService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
