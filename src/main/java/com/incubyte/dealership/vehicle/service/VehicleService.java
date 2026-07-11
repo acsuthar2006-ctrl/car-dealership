@@ -83,8 +83,9 @@ public class VehicleService {
 
     @Transactional
     public VehicleResponse purchaseVehicle(UUID id) {
-        Vehicle vehicle = vehicleRepository.findById(id).orElse(null);
-        if (vehicle != null && vehicle.getQuantityInStock() <= 0) {
+        Vehicle vehicle = vehicleRepository.findById(id)
+                .orElseThrow(() -> new VehicleNotFoundException(id));
+        if (vehicle.getQuantityInStock() <= 0) {
             throw new com.incubyte.dealership.vehicle.exception.OutOfStockException(id);
         }
         vehicle.setQuantityInStock(vehicle.getQuantityInStock() - 1);
