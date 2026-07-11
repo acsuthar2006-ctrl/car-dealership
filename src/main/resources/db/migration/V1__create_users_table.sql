@@ -2,7 +2,7 @@
 -- Role is stored as a simple VARCHAR (USER or ADMIN) for clarity
 
 CREATE TABLE users (
-    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id          UUID PRIMARY KEY,
     username    VARCHAR(50)  NOT NULL UNIQUE,
     email       VARCHAR(255) NOT NULL UNIQUE,
     password    VARCHAR(255) NOT NULL,

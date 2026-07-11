@@ -4,6 +4,8 @@ import com.incubyte.dealership.auth.controller.AuthController;
 import com.incubyte.dealership.auth.dto.JwtResponse;
 import com.incubyte.dealership.auth.dto.LoginRequest;
 import com.incubyte.dealership.auth.service.AuthService;
+import com.incubyte.dealership.shared.security.CustomUserDetailsService;
+import com.incubyte.dealership.shared.security.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -29,6 +31,12 @@ class LoginControllerTest {
 
     @MockitoBean
     AuthService authService;
+    
+    @MockitoBean
+    JwtService jwtService;
+
+    @MockitoBean
+    CustomUserDetailsService customUserDetailsService;
 
     @Test
     void login_withValidCredentials_returns200AndJwtToken() throws Exception {

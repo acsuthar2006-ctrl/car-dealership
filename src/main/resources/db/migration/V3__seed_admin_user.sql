@@ -4,7 +4,7 @@
 
 INSERT INTO users (id, username, email, password, role)
 VALUES (
-    gen_random_uuid(),
+    '00000000-0000-0000-0000-000000000001',
     'admin',
     'admin@dealership.com',
     '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',

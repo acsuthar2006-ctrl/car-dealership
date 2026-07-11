@@ -4,6 +4,8 @@ import com.incubyte.dealership.auth.controller.AuthController;
 import com.incubyte.dealership.auth.dto.AuthUserResponse;
 import com.incubyte.dealership.auth.dto.RegisterRequest;
 import com.incubyte.dealership.auth.service.AuthService;
+import com.incubyte.dealership.shared.security.CustomUserDetailsService;
+import com.incubyte.dealership.shared.security.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -29,6 +31,12 @@ class RegisterControllerTest {
 
 	@MockitoBean
 	AuthService authService;
+
+	@MockitoBean
+	JwtService jwtService;
+
+	@MockitoBean
+	CustomUserDetailsService customUserDetailsService;
 
 	@Test
 	void register_withValidPayload_returns201AndUserWithoutPassword() throws Exception {

@@ -1,8 +1,11 @@
 package com.incubyte.dealership.shared.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -13,22 +16,48 @@ public class JwtService {
 
 	// Injected from application.properties → app.jwt.secret
 	@Value("${app.jwt.secret}")
-	private String secret;
+	private String secretKey;
 
 	// Injected from application.properties → app.jwt.expiration-ms
 	@Value("${app.jwt.expiration-ms}")
 	private long expirationMs;
 
-	public String generateToken(String username) {
-		return Jwts.builder()
-			.subject(username)
-			.issuedAt(new Date())
-			.expiration(new Date(System.currentTimeMillis() + expirationMs))
-			.signWith(getSigningKey())
-			.compact();
+	private SecretKey getSigningKey() {
+		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+		return Keys.hmacShaKeyFor(keyBytes);
 	}
 
-	private SecretKey getSigningKey() {
-		return Keys.hmacShaKeyFor(secret.getBytes());
+	private Claims getClaimsFromToken(String token) {
+		return Jwts.parser()
+			.verifyWith(getSigningKey())
+			.build()
+			.parseSignedClaims(token)
+			.getPayload();
+	}
+
+	public String getUsernameFromToken(String token) {
+		return getClaimsFromToken(token).getSubject();
+	}
+
+	private boolean isTokenExpired(String token) {
+		Claims claims = getClaimsFromToken(token);
+		return claims.getExpiration().before(new Date());
+	}
+
+	public boolean isTokenValid(String token, UserDetails userDetails) {
+		String usernameFromToken = getUsernameFromToken(token);
+		String userNameFromUserDetails = userDetails.getUsername();
+
+		return usernameFromToken.equals(userNameFromUserDetails) && !isTokenExpired(token);
+	}
+
+	public String generateToken(UserDetails userDetails) {
+
+		return Jwts.builder()
+			.subject(userDetails.getUsername())
+			.expiration(new Date(System.currentTimeMillis() + expirationMs))
+			.issuedAt(new Date())
+			.signWith(getSigningKey())
+			.compact();
 	}
 }

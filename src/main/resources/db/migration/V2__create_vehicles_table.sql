@@ -1,7 +1,7 @@
 -- V2: Create vehicles table
 
 CREATE TABLE vehicles (
-    id                UUID           PRIMARY KEY DEFAULT gen_random_uuid(),
+    id                UUID           PRIMARY KEY,
     make              VARCHAR(100)   NOT NULL,
     model             VARCHAR(100)   NOT NULL,
     category          VARCHAR(20)    NOT NULL,
