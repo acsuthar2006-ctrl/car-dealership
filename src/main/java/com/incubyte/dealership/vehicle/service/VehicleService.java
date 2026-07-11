@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.UUID;
 
 import com.incubyte.dealership.vehicle.exception.VehicleAlreadyExistsException;
+import com.incubyte.dealership.vehicle.repository.VehicleSpecification;
+import org.springframework.data.jpa.domain.Specification;
 
 @Service
 @Transactional(readOnly = true)
@@ -48,24 +50,12 @@ public class VehicleService {
 
     public List<VehicleResponse> searchVehicles(String make, String model, String category, Double minPrice,
             Double maxPrice) {
-        org.springframework.data.jpa.domain.Specification<Vehicle> spec = org.springframework.data.jpa.domain.Specification
-                .where(null);
-
-        if (make != null && !make.isBlank()) {
-            spec = spec.and((root, query, cb) -> cb.equal(cb.lower(root.get("make")), make.toLowerCase()));
-        }
-        if (model != null && !model.isBlank()) {
-            spec = spec.and((root, query, cb) -> cb.equal(cb.lower(root.get("model")), model.toLowerCase()));
-        }
-        if (category != null && !category.isBlank()) {
-            spec = spec.and((root, query, cb) -> cb.equal(cb.lower(root.get("category")), category.toLowerCase()));
-        }
-        if (minPrice != null) {
-            spec = spec.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("price"), minPrice));
-        }
-        if (maxPrice != null) {
-            spec = spec.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("price"), maxPrice));
-        }
+        Specification<Vehicle> spec = Specification
+            .where(VehicleSpecification.hasMake(make))
+                .and(VehicleSpecification.hasModel(model))
+                .and(VehicleSpecification.hasCategory(category))
+                .and(VehicleSpecification.priceGreaterThanOrEqualTo(minPrice))
+                .and(VehicleSpecification.priceLessThanOrEqualTo(maxPrice));
 
         return vehicleRepository.findAll(spec).stream()
                 .map(this::mapToResponse)
