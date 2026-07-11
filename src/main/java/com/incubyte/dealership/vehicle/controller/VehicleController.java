@@ -29,4 +29,11 @@ public class VehicleController {
     public ResponseEntity<List<VehicleResponse>> getVehicles() {
         return ResponseEntity.ok(vehicleService.getVehicles());
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<VehicleResponse> updateVehicle(
+            @PathVariable java.util.UUID id,
+            @Valid @RequestBody VehicleRequest request) {
+        return ResponseEntity.ok(vehicleService.updateVehicle(id, request));
+    }
 }

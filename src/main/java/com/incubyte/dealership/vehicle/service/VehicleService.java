@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
@@ -32,10 +33,25 @@ public class VehicleService {
         return mapToResponse(saved);
     }
 
-    public java.util.List<VehicleResponse> getVehicles() {
+    public List<VehicleResponse> getVehicles() {
         return vehicleRepository.findAll().stream()
                 .map(this::mapToResponse)
                 .toList();
+    }
+
+
+    @Transactional
+    public VehicleResponse updateVehicle(UUID id, VehicleRequest request) {
+        Vehicle vehicle = vehicleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Vehicle not found with id: " + id));
+
+        vehicle.setMake(request.make());
+        vehicle.setModel(request.model());
+        vehicle.setCategory(request.category());
+        vehicle.setPrice(request.price());
+        vehicle.setQuantityInStock(request.quantityInStock());
+
+        return mapToResponse(vehicleRepository.save(vehicle));
     }
 
     private VehicleResponse mapToResponse(Vehicle vehicle) {
