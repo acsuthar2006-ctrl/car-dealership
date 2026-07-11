@@ -37,7 +37,9 @@ public class VehicleController {
             @RequestParam(required = false) String category,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice) {
-        return ResponseEntity.ok(vehicleService.searchVehicles(make, model, category, minPrice, maxPrice));
+
+        List<VehicleResponse> res = vehicleService.searchVehicles(make, model, category, minPrice, maxPrice);
+        return ResponseEntity.ok(res);
     }
 
     @PutMapping("/{id}")
