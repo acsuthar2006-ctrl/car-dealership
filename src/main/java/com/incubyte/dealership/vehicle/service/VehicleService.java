@@ -46,6 +46,32 @@ public class VehicleService {
                 .toList();
     }
 
+    public List<VehicleResponse> searchVehicles(String make, String model, String category, Double minPrice,
+            Double maxPrice) {
+        org.springframework.data.jpa.domain.Specification<Vehicle> spec = org.springframework.data.jpa.domain.Specification
+                .where(null);
+
+        if (make != null && !make.isBlank()) {
+            spec = spec.and((root, query, cb) -> cb.equal(cb.lower(root.get("make")), make.toLowerCase()));
+        }
+        if (model != null && !model.isBlank()) {
+            spec = spec.and((root, query, cb) -> cb.equal(cb.lower(root.get("model")), model.toLowerCase()));
+        }
+        if (category != null && !category.isBlank()) {
+            spec = spec.and((root, query, cb) -> cb.equal(cb.lower(root.get("category")), category.toLowerCase()));
+        }
+        if (minPrice != null) {
+            spec = spec.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("price"), minPrice));
+        }
+        if (maxPrice != null) {
+            spec = spec.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("price"), maxPrice));
+        }
+
+        return vehicleRepository.findAll(spec).stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
     @Transactional
     public VehicleResponse updateVehicle(UUID id, VehicleRequest request) {
         Vehicle vehicle = vehicleRepository.findById(id)
