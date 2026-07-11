@@ -1,5 +1,6 @@
 package com.incubyte.dealership.vehicle.controller;
 
+import com.incubyte.dealership.vehicle.dto.RestockRequest;
 import com.incubyte.dealership.vehicle.dto.VehicleRequest;
 import com.incubyte.dealership.vehicle.dto.VehicleResponse;
 import com.incubyte.dealership.vehicle.service.VehicleService;
@@ -11,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/vehicles")
@@ -44,28 +46,28 @@ public class VehicleController {
 
     @PutMapping("/{id}")
     public ResponseEntity<VehicleResponse> updateVehicle(
-            @PathVariable java.util.UUID id,
+            @PathVariable UUID id,
             @Valid @RequestBody VehicleRequest request) {
         return ResponseEntity.ok(vehicleService.updateVehicle(id, request));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteVehicle(@PathVariable java.util.UUID id) {
+    public ResponseEntity<Void> deleteVehicle(@PathVariable UUID id) {
         vehicleService.deleteVehicle(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/purchase")
-    public ResponseEntity<VehicleResponse> purchaseVehicle(@PathVariable java.util.UUID id) {
+    public ResponseEntity<VehicleResponse> purchaseVehicle(@PathVariable UUID id) {
         return ResponseEntity.ok(vehicleService.purchaseVehicle(id));
     }
 
     @PostMapping("/{id}/restock")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<VehicleResponse> restockVehicle(
-            @PathVariable java.util.UUID id,
-            @Valid @RequestBody com.incubyte.dealership.vehicle.dto.RestockRequest request) {
+            @PathVariable UUID id,
+            @Valid @RequestBody RestockRequest request) {
         return ResponseEntity.ok(vehicleService.restockVehicle(id, request));
     }
 }

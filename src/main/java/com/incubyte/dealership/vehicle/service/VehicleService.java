@@ -1,20 +1,21 @@
 package com.incubyte.dealership.vehicle.service;
 
+import com.incubyte.dealership.vehicle.dto.RestockRequest;
 import com.incubyte.dealership.vehicle.dto.VehicleRequest;
 import com.incubyte.dealership.vehicle.dto.VehicleResponse;
 import com.incubyte.dealership.vehicle.entity.Vehicle;
+import com.incubyte.dealership.vehicle.exception.OutOfStockException;
+import com.incubyte.dealership.vehicle.exception.VehicleAlreadyExistsException;
 import com.incubyte.dealership.vehicle.exception.VehicleNotFoundException;
 import com.incubyte.dealership.vehicle.repository.VehicleRepository;
+import com.incubyte.dealership.vehicle.repository.VehicleSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
-
-import com.incubyte.dealership.vehicle.exception.VehicleAlreadyExistsException;
-import com.incubyte.dealership.vehicle.repository.VehicleSpecification;
-import org.springframework.data.jpa.domain.Specification;
 
 @Service
 @Transactional(readOnly = true)
@@ -86,7 +87,7 @@ public class VehicleService {
         Vehicle vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new VehicleNotFoundException(id));
         if (vehicle.getQuantityInStock() <= 0) {
-            throw new com.incubyte.dealership.vehicle.exception.OutOfStockException(id);
+            throw new OutOfStockException(id);
         }
         vehicle.setQuantityInStock(vehicle.getQuantityInStock() - 1);
         Vehicle saved = vehicleRepository.save(vehicle);
@@ -94,7 +95,7 @@ public class VehicleService {
     }
 
     @Transactional
-    public VehicleResponse restockVehicle(UUID id, com.incubyte.dealership.vehicle.dto.RestockRequest request) {
+    public VehicleResponse restockVehicle(UUID id, RestockRequest request) {
         Vehicle vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new VehicleNotFoundException(id));
         vehicle.setQuantityInStock(vehicle.getQuantityInStock() + request.quantity());

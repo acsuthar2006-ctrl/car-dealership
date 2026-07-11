@@ -1,6 +1,8 @@
 package com.incubyte.dealership.shared.exception;
 
 import com.incubyte.dealership.auth.exception.InvalidCredentialsException;
+import com.incubyte.dealership.vehicle.exception.OutOfStockException;
+import com.incubyte.dealership.vehicle.exception.VehicleAlreadyExistsException;
 import com.incubyte.dealership.vehicle.exception.VehicleNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -49,15 +51,15 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage()));
 	}
 
-	@ExceptionHandler(com.incubyte.dealership.vehicle.exception.VehicleAlreadyExistsException.class)
+	@ExceptionHandler(VehicleAlreadyExistsException.class)
 	public ResponseEntity<Map<String, String>> handleVehicleAlreadyExistsException(
-			com.incubyte.dealership.vehicle.exception.VehicleAlreadyExistsException ex) {
+			VehicleAlreadyExistsException ex) {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", ex.getMessage()));
 	}
 
-	@ExceptionHandler(com.incubyte.dealership.vehicle.exception.OutOfStockException.class)
+	@ExceptionHandler(OutOfStockException.class)
 	public ResponseEntity<Map<String, String>> handleOutOfStockException(
-			com.incubyte.dealership.vehicle.exception.OutOfStockException ex) {
+			OutOfStockException ex) {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", ex.getMessage()));
 	}
 }

@@ -7,12 +7,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import com.incubyte.dealership.vehicle.dto.RestockRequest;
 import com.incubyte.dealership.vehicle.dto.VehicleRequest;
 import com.incubyte.dealership.vehicle.dto.VehicleResponse;
+import com.incubyte.dealership.vehicle.exception.OutOfStockException;
+import com.incubyte.dealership.vehicle.exception.VehicleAlreadyExistsException;
+import com.incubyte.dealership.vehicle.exception.VehicleNotFoundException;
 import com.incubyte.dealership.vehicle.service.VehicleService;
 import com.incubyte.dealership.shared.security.JwtService;
 import com.incubyte.dealership.shared.security.CustomUserDetailsService;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -33,8 +38,6 @@ class VehicleControllerTest {
 
 	private static final String VEHICLES_ENDPOINT = "/vehicles";
 	private static final String SEARCH_ENDPOINT = "/vehicles/search";
-	private static final String PURCHASE_ENDPOINT = "/vehicles";
-	private static final String RESTOCK_ENDPOINT = "/vehicles";
 
 	@Autowired
 	MockMvc mockMvc;
@@ -78,7 +81,7 @@ class VehicleControllerTest {
 		var request = new VehicleRequest("Toyota", "Camry", "SEDAN", 25000.00);
 
 		when(vehicleService.addVehicle(any())).thenThrow(
-				new com.incubyte.dealership.vehicle.exception.VehicleAlreadyExistsException("Toyota", "Camry"));
+				new VehicleAlreadyExistsException("Toyota", "Camry"));
 
 		// ACT + ASSERT
 		mockMvc.perform(post(VEHICLES_ENDPOINT)
@@ -117,7 +120,7 @@ class VehicleControllerTest {
 	void getVehicles_returns200AndListOfVehicles() throws Exception {
 		// ARRANGE
 		var response = new VehicleResponse(UUID.randomUUID(), "Ford", "Mustang", "COUPE", 45000.0, 2);
-		when(vehicleService.getVehicles()).thenReturn(java.util.List.of(response));
+		when(vehicleService.getVehicles()).thenReturn(List.of(response));
 
 		// ACT + ASSERT
 		mockMvc.perform(get(VEHICLES_ENDPOINT))
@@ -132,7 +135,7 @@ class VehicleControllerTest {
 		// ARRANGE
 		var response = new VehicleResponse(UUID.randomUUID(), "Honda", "Civic", "SEDAN", 20000.0, 5);
 		when(vehicleService.searchVehicles("Honda", "Civic", "SEDAN", 15000.0, 25000.0))
-				.thenReturn(java.util.List.of(response));
+				.thenReturn(List.of(response));
 
 		// ACT + ASSERT
 		mockMvc.perform(get(VEHICLES_ENDPOINT + "/search")
@@ -151,7 +154,7 @@ class VehicleControllerTest {
 	void searchVehicles_byMake_returns200AndFilteredResults() throws Exception {
 		var response = new VehicleResponse(UUID.randomUUID(), "Toyota", "Camry", "SEDAN", 25000.0, 5);
 		when(vehicleService.searchVehicles("Toyota", null, null, null, null))
-				.thenReturn(java.util.List.of(response));
+				.thenReturn(List.of(response));
 
 		mockMvc.perform(get(SEARCH_ENDPOINT + "?make=Toyota"))
 				.andExpect(status().isOk())
@@ -164,7 +167,7 @@ class VehicleControllerTest {
 	void searchVehicles_byPriceRange_returns200AndFilteredResults() throws Exception {
 		var response = new VehicleResponse(UUID.randomUUID(), "Honda", "Civic", "SEDAN", 23000.0, 8);
 		when(vehicleService.searchVehicles(null, null, null, 20000.0, 30000.0))
-				.thenReturn(java.util.List.of(response));
+				.thenReturn(List.of(response));
 
 		mockMvc.perform(get(SEARCH_ENDPOINT + "?minPrice=20000&maxPrice=30000"))
 				.andExpect(status().isOk())
@@ -175,7 +178,7 @@ class VehicleControllerTest {
 	@WithMockUser
 	void searchVehicles_withNoMatches_returns200AndEmptyList() throws Exception {
 		when(vehicleService.searchVehicles("NonExistent", null, null, null, null))
-				.thenReturn(java.util.List.of());
+				.thenReturn(List.of());
 
 		mockMvc.perform(get(SEARCH_ENDPOINT + "?make=NonExistent"))
 				.andExpect(status().isOk())
@@ -192,7 +195,7 @@ class VehicleControllerTest {
 		when(vehicleService.purchaseVehicle(vehicleId)).thenReturn(response);
 
 		// ACT + ASSERT
-		mockMvc.perform(post(PURCHASE_ENDPOINT + "/" + vehicleId + "/purchase"))
+		mockMvc.perform(post(VEHICLES_ENDPOINT + "/" + vehicleId + "/purchase"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.quantityInStock").value(4)); // Decreased from 5 to 4
 	}
@@ -204,10 +207,10 @@ class VehicleControllerTest {
 		UUID vehicleId = UUID.randomUUID();
 
 		when(vehicleService.purchaseVehicle(vehicleId))
-				.thenThrow(new com.incubyte.dealership.vehicle.exception.OutOfStockException(vehicleId));
+				.thenThrow(new OutOfStockException(vehicleId));
 
 		// ACT + ASSERT
-		mockMvc.perform(post(PURCHASE_ENDPOINT + "/" + vehicleId + "/purchase"))
+		mockMvc.perform(post(VEHICLES_ENDPOINT + "/" + vehicleId + "/purchase"))
 				.andExpect(status().isConflict())
 				.andExpect(jsonPath("$.error").exists());
 	}
@@ -219,10 +222,10 @@ class VehicleControllerTest {
 		UUID nonExistentId = UUID.randomUUID();
 
 		when(vehicleService.purchaseVehicle(nonExistentId))
-				.thenThrow(new com.incubyte.dealership.vehicle.exception.VehicleNotFoundException(nonExistentId));
+				.thenThrow(new VehicleNotFoundException(nonExistentId));
 
 		// ACT + ASSERT
-		mockMvc.perform(post(PURCHASE_ENDPOINT + "/" + nonExistentId + "/purchase"))
+		mockMvc.perform(post(VEHICLES_ENDPOINT + "/" + nonExistentId + "/purchase"))
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$.error").exists());
 	}
@@ -238,10 +241,9 @@ class VehicleControllerTest {
 		when(vehicleService.updateVehicle(id, request)).thenReturn(response);
 
 		// ACT + ASSERT
-		mockMvc.perform(
-				org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put(VEHICLES_ENDPOINT + "/" + id)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(request)))
+		mockMvc.perform(put(VEHICLES_ENDPOINT + "/" + id)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.make").value("Honda"));
 	}
@@ -254,11 +256,10 @@ class VehicleControllerTest {
 		var request = new VehicleRequest("Honda", "Accord", "SEDAN", 27000.00);
 
 		when(vehicleService.updateVehicle(nonExistentId, request))
-				.thenThrow(new com.incubyte.dealership.vehicle.exception.VehicleNotFoundException(nonExistentId));
+				.thenThrow(new VehicleNotFoundException(nonExistentId));
 
 		// ACT + ASSERT
-		mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-				.put(VEHICLES_ENDPOINT + "/" + nonExistentId)
+		mockMvc.perform(put(VEHICLES_ENDPOINT + "/" + nonExistentId)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isNotFound());
@@ -292,13 +293,13 @@ class VehicleControllerTest {
 	void restockVehicle_asAdmin_returns200AndIncreasesQuantity() throws Exception {
 		// ARRANGE
 		UUID vehicleId = UUID.randomUUID();
-		var request = new com.incubyte.dealership.vehicle.dto.RestockRequest(5);
+		var request = new RestockRequest(5);
 		var response = new VehicleResponse(vehicleId, "Toyota", "Camry", "SEDAN", 25000.00, 6); // 1 + 5
 
 		when(vehicleService.restockVehicle(vehicleId, request)).thenReturn(response);
 
 		// ACT + ASSERT
-		mockMvc.perform(post(RESTOCK_ENDPOINT + "/" + vehicleId + "/restock")
+		mockMvc.perform(post(VEHICLES_ENDPOINT + "/" + vehicleId + "/restock")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isOk())
@@ -310,10 +311,10 @@ class VehicleControllerTest {
 	void restockVehicle_asNonAdmin_returns403Forbidden() throws Exception {
 		// ARRANGE
 		UUID vehicleId = UUID.randomUUID();
-		var request = new com.incubyte.dealership.vehicle.dto.RestockRequest(5);
+		var request = new RestockRequest(5);
 
 		// ACT + ASSERT
-		mockMvc.perform(post(RESTOCK_ENDPOINT + "/" + vehicleId + "/restock")
+		mockMvc.perform(post(VEHICLES_ENDPOINT + "/" + vehicleId + "/restock")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isForbidden());
@@ -324,13 +325,13 @@ class VehicleControllerTest {
 	void restockVehicle_withNonExistentId_returns404NotFound() throws Exception {
 		// ARRANGE
 		UUID nonExistentId = UUID.randomUUID();
-		var request = new com.incubyte.dealership.vehicle.dto.RestockRequest(5);
+		var request = new RestockRequest(5);
 
 		when(vehicleService.restockVehicle(nonExistentId, request))
-				.thenThrow(new com.incubyte.dealership.vehicle.exception.VehicleNotFoundException(nonExistentId));
+				.thenThrow(new VehicleNotFoundException(nonExistentId));
 
 		// ACT + ASSERT
-		mockMvc.perform(post(RESTOCK_ENDPOINT + "/" + nonExistentId + "/restock")
+		mockMvc.perform(post(VEHICLES_ENDPOINT + "/" + nonExistentId + "/restock")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isNotFound());
@@ -341,10 +342,10 @@ class VehicleControllerTest {
 	void restockVehicle_withNegativeQuantity_returns400BadRequest() throws Exception {
 		// ARRANGE
 		UUID vehicleId = UUID.randomUUID();
-		var request = new com.incubyte.dealership.vehicle.dto.RestockRequest(-5);
+		var request = new RestockRequest(-5);
 
 		// ACT + ASSERT
-		mockMvc.perform(post(RESTOCK_ENDPOINT + "/" + vehicleId + "/restock")
+		mockMvc.perform(post(VEHICLES_ENDPOINT + "/" + vehicleId + "/restock")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isBadRequest());
