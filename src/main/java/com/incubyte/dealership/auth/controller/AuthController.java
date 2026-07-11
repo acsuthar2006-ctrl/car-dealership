@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -22,6 +24,7 @@ public class AuthController {
 
 	@PostMapping("/register")
 	public ResponseEntity<AuthUserResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
+		log.info("Received request to register user with username: {} and email: {}", registerRequest.username(), registerRequest.email());
 		return ResponseEntity
 			.status(HttpStatus.CREATED)
 			.body(authService.register(registerRequest));
@@ -29,6 +32,7 @@ public class AuthController {
 
 	@PostMapping("/login")
 	public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest request) {
+		log.info("Received request to login user with username: {}", request.username());
 		return ResponseEntity.ok(authService.login(request));
 	}
 

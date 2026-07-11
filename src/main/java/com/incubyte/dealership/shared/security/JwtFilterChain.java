@@ -38,7 +38,7 @@ public class JwtFilterChain extends OncePerRequestFilter {
 		try {
 			username = jwtService.getUsernameFromToken(token);
 
-		}  catch (UsernameNotFoundException e) {
+		}  catch (Exception e) {
 			// Token is expired, malformed, or invalid — skip authentication
 			// and let the request continue unauthenticated.
 			// Public endpoints (permitAll) will still work fine.

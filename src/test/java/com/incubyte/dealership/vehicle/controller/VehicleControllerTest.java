@@ -113,8 +113,8 @@ class VehicleControllerTest {
 
 		// ACT + ASSERT
 		mockMvc.perform(get(VEHICLES_ENDPOINT))
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.size()").value(1))
-			.andExpect(jsonPath("$[0].make").value("Ford"));
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.size()").value(1))
+				.andExpect(jsonPath("$[0].make").value("Ford"));
 	}
 }
