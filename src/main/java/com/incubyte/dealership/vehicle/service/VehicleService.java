@@ -81,6 +81,14 @@ public class VehicleService {
         vehicleRepository.deleteById(id);
     }
 
+    @Transactional
+    public VehicleResponse purchaseVehicle(UUID id) {
+        Vehicle vehicle = vehicleRepository.findById(id).orElse(null);
+        vehicle.setQuantityInStock(vehicle.getQuantityInStock() - 1);
+        Vehicle saved = vehicleRepository.save(vehicle);
+        return mapToResponse(saved);
+    }
+
     private VehicleResponse mapToResponse(Vehicle vehicle) {
         return new VehicleResponse(
                 vehicle.getId(),

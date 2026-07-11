@@ -55,4 +55,9 @@ public class VehicleController {
         vehicleService.deleteVehicle(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/purchase")
+    public ResponseEntity<VehicleResponse> purchaseVehicle(@PathVariable java.util.UUID id) {
+        return ResponseEntity.ok(vehicleService.purchaseVehicle(id));
+    }
 }
