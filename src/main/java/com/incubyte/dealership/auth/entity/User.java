@@ -20,13 +20,13 @@ import java.util.UUID;
 @Builder
 public class User implements UserDetails {
 	@Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 
 	@Column(nullable = false, unique = true)
 	private String username;
 
-	@Column(nullable = false , unique = true)
+	@Column(nullable = false, unique = true)
 	private String email;
 
 	@Column(nullable = false)
@@ -34,15 +34,14 @@ public class User implements UserDetails {
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private Role role =  Role.USER;
+	private Role role = Role.USER;
 
 	@CreationTimestamp
 	private LocalDateTime createdAt;
 
-
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return List.of(new SimpleGrantedAuthority(role.name()));
+		return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
 	}
 
 	@Override
