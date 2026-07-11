@@ -21,7 +21,14 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(value = VehicleController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
+import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
+import com.incubyte.dealership.shared.config.SecurityConfig;
+import com.incubyte.dealership.shared.security.JwtFilterChain;
+
+@WebMvcTest(VehicleController.class)
+@Import({SecurityConfig.class, JwtFilterChain.class})
+@WithMockUser
 class VehicleControllerTest {
 
 	private static final String VEHICLES_ENDPOINT = "/vehicles";

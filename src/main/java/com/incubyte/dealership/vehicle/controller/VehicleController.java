@@ -6,18 +6,20 @@ import com.incubyte.dealership.vehicle.service.VehicleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/vehicles")
 @RequiredArgsConstructor
+@PreAuthorize("isAuthenticated()")
 public class VehicleController {
 
     private final VehicleService vehicleService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public VehicleResponse addVehicle(@Valid @RequestBody VehicleRequest request) {
-        return vehicleService.addVehicle(request);
+    public ResponseEntity<VehicleResponse> addVehicle(@Valid @RequestBody VehicleRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(vehicleService.addVehicle(request));
     }
 }
