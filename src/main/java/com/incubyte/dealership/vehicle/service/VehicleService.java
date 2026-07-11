@@ -55,6 +55,11 @@ public class VehicleService {
         return mapToResponse(saved);
     }
 
+    @Transactional
+    public void deleteVehicle(UUID id) {
+        vehicleRepository.deleteById(id);
+    }
+
     private VehicleResponse mapToResponse(Vehicle vehicle) {
         return new VehicleResponse(
                 vehicle.getId(),
