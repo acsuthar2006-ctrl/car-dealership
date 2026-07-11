@@ -72,4 +72,16 @@ class VehicleControllerTest {
 				.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isBadRequest());
 	}
+
+	@Test
+	void addVehicle_withBlankStrings_returns400BadRequest() throws Exception {
+		// ARRANGE
+		var request = new VehicleRequest("", "", "", 25000.0, 5);
+
+		// ACT + ASSERT
+		mockMvc.perform(post(VEHICLES_ENDPOINT)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request)))
+			.andExpect(status().isBadRequest());
+	}
 }
