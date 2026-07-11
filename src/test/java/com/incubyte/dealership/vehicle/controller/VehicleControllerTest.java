@@ -33,6 +33,8 @@ class VehicleControllerTest {
 
 	private static final String VEHICLES_ENDPOINT = "/vehicles";
 	private static final String SEARCH_ENDPOINT = "/vehicles/search";
+	private static final String PURCHASE_ENDPOINT = "/vehicles";
+	private static final String RESTOCK_ENDPOINT = "/vehicles";
 
 	@Autowired
 	MockMvc mockMvc;
@@ -180,8 +182,6 @@ class VehicleControllerTest {
 				.andExpect(jsonPath("$.size()").value(0));
 	}
 
-	private static final String PURCHASE_ENDPOINT = "/vehicles";
-
 	@Test
 	@WithMockUser
 	void purchaseVehicle_withAvailableStock_returns200AndDecreasesQuantity() throws Exception {
@@ -285,5 +285,68 @@ class VehicleControllerTest {
 		// ACT + ASSERT
 		mockMvc.perform(delete(VEHICLES_ENDPOINT + "/" + id))
 				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithMockUser(roles = "ADMIN")
+	void restockVehicle_asAdmin_returns200AndIncreasesQuantity() throws Exception {
+		// ARRANGE
+		UUID vehicleId = UUID.randomUUID();
+		var request = new com.incubyte.dealership.vehicle.dto.RestockRequest(5);
+		var response = new VehicleResponse(vehicleId, "Toyota", "Camry", "SEDAN", 25000.00, 6); // 1 + 5
+
+		when(vehicleService.restockVehicle(vehicleId, request)).thenReturn(response);
+
+		// ACT + ASSERT
+		mockMvc.perform(post(RESTOCK_ENDPOINT + "/" + vehicleId + "/restock")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.quantityInStock").value(6)); // Increased from 1 to 6
+	}
+
+	@Test
+	@WithMockUser(roles = "USER")
+	void restockVehicle_asNonAdmin_returns403Forbidden() throws Exception {
+		// ARRANGE
+		UUID vehicleId = UUID.randomUUID();
+		var request = new com.incubyte.dealership.vehicle.dto.RestockRequest(5);
+
+		// ACT + ASSERT
+		mockMvc.perform(post(RESTOCK_ENDPOINT + "/" + vehicleId + "/restock")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithMockUser(roles = "ADMIN")
+	void restockVehicle_withNonExistentId_returns404NotFound() throws Exception {
+		// ARRANGE
+		UUID nonExistentId = UUID.randomUUID();
+		var request = new com.incubyte.dealership.vehicle.dto.RestockRequest(5);
+
+		when(vehicleService.restockVehicle(nonExistentId, request))
+				.thenThrow(new com.incubyte.dealership.vehicle.exception.VehicleNotFoundException(nonExistentId));
+
+		// ACT + ASSERT
+		mockMvc.perform(post(RESTOCK_ENDPOINT + "/" + nonExistentId + "/restock")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	@WithMockUser(roles = "ADMIN")
+	void restockVehicle_withNegativeQuantity_returns400BadRequest() throws Exception {
+		// ARRANGE
+		UUID vehicleId = UUID.randomUUID();
+		var request = new com.incubyte.dealership.vehicle.dto.RestockRequest(-5);
+
+		// ACT + ASSERT
+		mockMvc.perform(post(RESTOCK_ENDPOINT + "/" + vehicleId + "/restock")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isBadRequest());
 	}
 }
