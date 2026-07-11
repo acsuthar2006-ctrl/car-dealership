@@ -51,7 +51,7 @@ public class VehicleService {
     public List<VehicleResponse> searchVehicles(String make, String model, String category, Double minPrice,
             Double maxPrice) {
         Specification<Vehicle> spec = Specification
-            .where(VehicleSpecification.hasMake(make))
+                .where(VehicleSpecification.hasMake(make))
                 .and(VehicleSpecification.hasModel(model))
                 .and(VehicleSpecification.hasCategory(category))
                 .and(VehicleSpecification.priceGreaterThanOrEqualTo(minPrice))
@@ -91,6 +91,17 @@ public class VehicleService {
         vehicle.setQuantityInStock(vehicle.getQuantityInStock() - 1);
         Vehicle saved = vehicleRepository.save(vehicle);
         return mapToResponse(saved);
+    }
+
+    @Transactional
+    public VehicleResponse restockVehicle(UUID id, com.incubyte.dealership.vehicle.dto.RestockRequest request) {
+        Vehicle vehicle = vehicleRepository.findById(id).orElse(null);
+        if (vehicle != null) {
+            vehicle.setQuantityInStock(vehicle.getQuantityInStock() + request.quantity());
+            Vehicle saved = vehicleRepository.save(vehicle);
+            return mapToResponse(saved);
+        }
+        return null;
     }
 
     private VehicleResponse mapToResponse(Vehicle vehicle) {

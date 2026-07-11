@@ -60,4 +60,11 @@ public class VehicleController {
     public ResponseEntity<VehicleResponse> purchaseVehicle(@PathVariable java.util.UUID id) {
         return ResponseEntity.ok(vehicleService.purchaseVehicle(id));
     }
+
+    @PostMapping("/{id}/restock")
+    public ResponseEntity<VehicleResponse> restockVehicle(
+            @PathVariable java.util.UUID id,
+            @RequestBody com.incubyte.dealership.vehicle.dto.RestockRequest request) {
+        return ResponseEntity.ok(vehicleService.restockVehicle(id, request));
+    }
 }
