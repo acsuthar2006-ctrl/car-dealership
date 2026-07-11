@@ -38,22 +38,49 @@ class RegisterControllerTest {
 	@MockitoBean
 	CustomUserDetailsService customUserDetailsService;
 
-	@Test
-	void register_withValidPayload_returns201AndUserWithoutPassword() throws Exception {
-		// Password must never be exposed in API responses — security requirement
+    @Test
+    void register_withValidPayload_returns201AndUserWithoutPassword() throws Exception {
+        // Password must never be exposed in API responses — security requirement
 
-		// ARRANGE
-		var request = new RegisterRequest("aarya", "aarya@test.com", "secret123");
-		var response = new AuthUserResponse(null, "aarya", "aarya@test.com");
+        // ARRANGE
+        var request = new RegisterRequest("aarya", "aarya@test.com", "secret123");
+        var response = new AuthUserResponse(null, "aarya", "aarya@test.com");
 
-		when(authService.register(any())).thenReturn(response);
+        when(authService.register(any())).thenReturn(response);
 
-		// ACT + ASSERT
-		mockMvc.perform(post("/auth/register")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().isCreated()) // 201
-				.andExpect(jsonPath("$.password").doesNotExist()) // no password leak
-				.andExpect(jsonPath("$.username").value("aarya")); // correct data
-	}
+        // ACT + ASSERT
+        mockMvc.perform(post("/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated()) // 201
+                .andExpect(jsonPath("$.password").doesNotExist()) // no password leak
+                .andExpect(jsonPath("$.username").value("aarya")); // correct data
+    }
+
+    @Test
+    void register_withDuplicateUsernameOrEmail_returns409() throws Exception {
+        // ARRANGE
+        var request = new RegisterRequest("aarya", "aarya@test.com", "secret123");
+        when(authService.register(any())).thenThrow(new org.springframework.dao.DataIntegrityViolationException("Duplicate key"));
+
+        // ACT + ASSERT
+        mockMvc.perform(post("/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isConflict()); // 409
+    }
+
+    @Test
+    void register_withInvalidEmail_returns400() throws Exception {
+        // ARRANGE
+        var request = new RegisterRequest("aarya", "not-an-email", "secret123");
+		when(authService.register(any())).thenThrow(new org.springframework.dao.DataIntegrityViolationException("Invalid email"));
+
+        // ACT + ASSERT
+        mockMvc.perform(post("/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+	            .andExpect(jsonPath("$.email").exists()); // 400
+    }
 }

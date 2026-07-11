@@ -55,4 +55,30 @@ class LoginControllerTest {
                 .andExpect(status().isOk()) // 200 — synchronous auth
                 .andExpect(jsonPath("$.token").exists()); // JWT issued
     }
+
+    @Test
+    void login_withInvalidCredentials_returns401() throws Exception {
+        // ARRANGE
+        var request = new LoginRequest("aarya", "wrongpassword");
+        when(authService.login(any())).thenThrow(new org.springframework.security.authentication.BadCredentialsException("Bad credentials"));
+
+        // ACT + ASSERT
+        mockMvc.perform(post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnauthorized()); // 401
+    }
+
+    @Test
+    void login_withMissingFields_returns400() throws Exception {
+        // ARRANGE
+        var request = new LoginRequest("", "");
+
+        // ACT + ASSERT
+        mockMvc.perform(post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.username").exists()); // 400
+    }
 }
