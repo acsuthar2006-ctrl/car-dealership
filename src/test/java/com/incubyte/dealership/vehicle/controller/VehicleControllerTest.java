@@ -148,7 +148,8 @@ class VehicleControllerTest {
 				.thenThrow(new com.incubyte.dealership.vehicle.exception.VehicleNotFoundException(nonExistentId));
 
 		// ACT + ASSERT
-		mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put(VEHICLES_ENDPOINT + "/" + nonExistentId)
+		mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+				.put(VEHICLES_ENDPOINT + "/" + nonExistentId)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isNotFound());
@@ -164,5 +165,16 @@ class VehicleControllerTest {
 		// ACT + ASSERT
 		mockMvc.perform(delete(VEHICLES_ENDPOINT + "/" + id))
 				.andExpect(status().isNoContent());
+	}
+
+	@Test
+	@WithMockUser(roles = "USER")
+	void deleteVehicle_asNonAdmin_returns403Forbidden() throws Exception {
+		// ARRANGE
+		UUID id = UUID.randomUUID();
+
+		// ACT + ASSERT
+		mockMvc.perform(delete(VEHICLES_ENDPOINT + "/" + id))
+				.andExpect(status().isForbidden());
 	}
 }

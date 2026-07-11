@@ -36,4 +36,10 @@ public class VehicleController {
             @Valid @RequestBody VehicleRequest request) {
         return ResponseEntity.ok(vehicleService.updateVehicle(id, request));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteVehicle(@PathVariable java.util.UUID id) {
+        vehicleService.deleteVehicle(id);
+        return ResponseEntity.noContent().build();
+    }
 }
