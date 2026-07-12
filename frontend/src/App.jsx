@@ -14,7 +14,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { HomePage } from "./pages/HomePage";
 import { AdminPage } from "./pages/AdminPage";
-import { Layout } from './components/Layout/Layout';
+import { Layout } from "./components/Layout/Layout";
 
 function App() {
   return (

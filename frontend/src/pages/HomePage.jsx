@@ -46,8 +46,6 @@ export const HomePage = () => {
       className="page-container"
       style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}
     >
-
-
       <main>
         <VehicleSearch onSearch={fetchVehicles} />
 
