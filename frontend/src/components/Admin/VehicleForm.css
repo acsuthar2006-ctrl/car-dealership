@@ -13,21 +13,22 @@
 }
 
 .modal-content {
-  background-color: var(--surface-color);
+  background-color: var(--bg-primary);
   padding: 32px;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   width: 100%;
   max-width: 440px;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
 }
 
 .modal-title {
   margin-top: 0;
   margin-bottom: 24px;
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.01em;
+  color: var(--primary-color);
+  letter-spacing: -0.5px;
+  text-transform: uppercase;
 }
 
 .form-group {
@@ -36,10 +37,10 @@
 
 .form-label {
   display: block;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 6px;
+  color: var(--text-primary);
+  margin-bottom: 8px;
 }
 
 .form-row {
@@ -55,11 +56,10 @@
 
 .modal-actions {
   display: flex;
-  gap: 12px;
-  margin-top: 24px;
+  gap: 16px;
+  margin-top: 32px;
 }
 
 .modal-actions .btn {
   flex: 1;
-  padding: 10px;
 }

@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-toastify";
-import "./AuthForms.css";
 
 export const LoginForm = () => {
   const [username, setUsername] = useState("");
@@ -29,7 +28,6 @@ export const LoginForm = () => {
       if (status === 401 || status === 403) {
         message = backendError || "Invalid username or password";
       } else if (status === 400 && responseData) {
-        // Backend sends { fieldName: errorMessage } for validation errors
         const validationErrors = Object.values(responseData);
         if (validationErrors.length > 0) {
           message = validationErrors.join(", ");
@@ -49,38 +47,37 @@ export const LoginForm = () => {
   };
 
   return (
-    <div className="auth-form-container">
-      <h2>Login to Dealership</h2>
-      <form onSubmit={handleSubmit} className="auth-form">
-        <div className="form-group">
-          <label htmlFor="username">Username</label>
-          <input
-            id="username"
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-        </div>
-        <button type="submit" disabled={isLoading} className="submit-btn">
-          {isLoading ? "Logging in..." : "Login"}
-        </button>
-      </form>
-      <p className="auth-link">
-        Don't have an account? <Link to="/register">Register here</Link>
-      </p>
-    </div>
+    <form onSubmit={handleSubmit} className="auth-form">
+      <div className="form-group">
+        <label htmlFor="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+          disabled={isLoading}
+          className="input-field"
+          placeholder="Enter your username"
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          disabled={isLoading}
+          className="input-field"
+          placeholder="Enter your password"
+        />
+      </div>
+      <a href="#" className="forgot-password-link">Forgot password?</a>
+      <button type="submit" disabled={isLoading} className="btn btn-primary submit-btn">
+        {isLoading ? "Signing In..." : "Sign In"}
+      </button>
+    </form>
   );
 };

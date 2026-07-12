@@ -1,0 +1,208 @@
+/* ========================================
+   Auth Page Layout (Two Panel Design)
+   ======================================== */
+.auth-page {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* ── Left Panel (Marketing) ── */
+.auth-left-panel {
+  width: 40%;
+  background: var(--grad-primary);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  color: var(--text-white);
+  text-align: center;
+  position: relative;
+}
+
+.auth-logo {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 40px;
+  letter-spacing: -1px;
+}
+
+.auth-marketing-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: opacity 0.3s ease;
+  min-height: 250px;
+}
+
+.auth-heading {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.auth-description {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 40px;
+  max-width: 80%;
+}
+
+.auth-features {
+  list-style: none;
+  padding: 0;
+  text-align: left;
+}
+
+.auth-features li {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 12px 0;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.auth-trust-badges {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 40px;
+}
+
+.auth-trust-badges p {
+  margin: 4px 0;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── Right Panel (Form Area) ── */
+.auth-right-panel {
+  width: 60%;
+  background: var(--bg-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-forms-wrapper {
+  width: 100%;
+  max-width: 400px;
+  display: grid;
+  /* Remove fixed height and overflow hidden so content can size naturally */
+}
+
+/* ── Sliding Animation Container ── */
+.auth-form-slider {
+  grid-area: 1 / 1;
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* State: Login Mode */
+.login-active .form-slide-login {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.login-active .form-slide-register {
+  transform: translateX(600px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* State: Register Mode */
+.register-active .form-slide-login {
+  transform: translateX(-600px);
+  opacity: 0;
+  pointer-events: none;
+}
+.register-active .form-slide-register {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── Form Inner Styles ── */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.submit-btn {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.auth-form-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.auth-form-subtitle {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.forgot-password-link {
+  display: block;
+  font-size: 12px;
+  color: var(--primary-color);
+  text-decoration: none;
+  text-align: right;
+  margin-bottom: 32px;
+  margin-top: -12px;
+}
+.forgot-password-link:hover {
+  color: #003d99;
+  text-decoration: underline;
+}
+
+.auth-switch-text {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.auth-switch-text a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+.auth-switch-text a:hover {
+  text-decoration: underline;
+  color: #003d99;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1023px) {
+  .auth-left-panel {
+    display: none;
+  }
+  .auth-right-panel {
+    width: 100%;
+  }
+}

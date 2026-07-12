@@ -5,6 +5,56 @@
   margin-bottom: 24px;
 }
 
+/* ── Inline Filter Bar ── */
+.admin-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  background-color: var(--surface-color);
+  padding: 12px 16px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+}
+
+.filter-bar-search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.search-icon {
+  color: var(--text-muted);
+}
+
+.filter-bar-input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-size: 14px;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.filter-bar-input::placeholder {
+  color: var(--text-muted);
+}
+
+.filter-bar-select {
+  border: none;
+  background: var(--bg-color);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+}
+
+/* ── Table Container ── */
 .table-container {
   overflow-x: auto;
   background-color: var(--surface-color);
@@ -21,12 +71,12 @@
 .admin-table th {
   padding: 16px;
   text-align: left;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
   color: var(--text-secondary);
   border-bottom: 1px solid var(--border-color);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
   background-color: var(--bg-color);
 }
 
@@ -46,8 +96,37 @@
   background-color: var(--accent-light);
 }
 
+.td-bold {
+  font-weight: 600;
+}
+
+/* ── Pill Badges (Like Image 2) ── */
+.stock-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+}
+
+.stock-in {
+  background-color: var(--success-bg);
+  color: var(--success);
+}
+
+.stock-out {
+  background-color: var(--danger-bg);
+  color: var(--danger);
+}
+
 .action-buttons {
   display: flex;
   gap: 8px;
   justify-content: center;
+}
+
+.action-buttons .btn {
+  padding: 6px 12px;
+  font-size: 12px;
 }

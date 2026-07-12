@@ -1,43 +1,58 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Color Palette */
-  --bg-color: #f8fafc;
-  --surface-color: #ffffff;
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
-  --text-muted: #94a3b8;
+  /* ============================
+     Luxury Auto Dealership Theme
+     ============================ */
+
+  /* Gradients */
+  --grad-primary: linear-gradient(135deg, #0066cc 0%, #003d99 100%);
+  --grad-primary-hover: linear-gradient(135deg, #0073e6 0%, #0047b3 100%);
+  --grad-secondary: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  --grad-secondary-hover: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  --grad-accent: linear-gradient(135deg, #c0c0c0 0%, #808080 100%);
+  --grad-accent-hover: linear-gradient(135deg, #d1d1d1 0%, #9ca3af 100%);
   
-  --accent-primary: #0f172a;
-  --accent-hover: #334155;
-  --accent-light: #f1f5f9;
+  --grad-success: linear-gradient(135deg, #059669 0%, #047857 100%);
+  --grad-header: linear-gradient(90deg, #0066cc 0%, #003d99 100%);
+
+  /* Solid Colors */
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-light: #f3f4f6;
+  --text-white: #ffffff;
   
-  --success: #10b981;
-  --success-bg: #d1fae5;
-  --danger: #ef4444;
-  --danger-bg: #fee2e2;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-dark: #0f172a;
+
+  --success: #059669;
+  --error: #dc2626;
   --warning: #f59e0b;
-  --warning-bg: #fef3c7;
-  --info: #3b82f6;
-  --info-bg: #dbeafe;
+  --primary-color: #0066cc;
 
   /* Borders & Shadows */
-  --border-color: #e2e8f0;
-  --border-light: #f1f5f9;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --border-color: #e5e7eb;
+  --border-premium: 1px solid rgba(192,192,192,0.2);
+  --border-premium-hover: 1px solid rgba(192,192,192,0.3);
+  
+  --shadow-card: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-card-hover: 0 20px 40px rgba(0,102,204,0.15);
+  --shadow-btn: 0 4px 6px rgba(0,0,0,0.07);
+  --shadow-btn-primary: 0 15px 30px rgba(0,102,204,0.2);
+  --shadow-btn-secondary: 0 15px 30px rgba(220,38,38,0.2);
+  --shadow-btn-accent: 0 15px 30px rgba(192,192,192,0.2);
   
   /* Border Radius */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
   --radius-full: 9999px;
+  --radius-img: 8px;
 
   /* Transitions */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
 }
 
 * {
@@ -47,96 +62,159 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: var(--bg-color);
+  font-family: 'Segoe UI', 'Inter', 'Helvetica Neue', sans-serif;
+  background-color: var(--bg-secondary);
   color: var(--text-primary);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Global Button Styles */
+/* ============================
+   Typography
+   ============================ */
+h1, .text-h1 { font-size: 32px; font-weight: 700; color: var(--primary-color); letter-spacing: -0.5px; }
+h2, .text-h2 { font-size: 24px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.5px; }
+h3, .text-h3 { font-size: 18px; font-weight: 600; color: var(--text-primary); }
+p, .text-body { font-size: 16px; font-weight: 400; color: var(--text-primary); }
+.text-small { font-size: 14px; font-weight: 500; color: var(--text-secondary); }
+.text-tiny { font-size: 12px; font-weight: 400; color: var(--text-secondary); }
+
+/* ============================
+   Global Button Styles
+   ============================ */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 500;
-  border-radius: var(--radius-md);
+  font-family: inherit;
   border: none;
   cursor: pointer;
-  transition: all var(--transition-fast);
   text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-btn);
 }
 
+.btn:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+  transform: none;
+  box-shadow: none;
+}
+
+/* Primary Action Buttons (Submit, Login, Add Vehicle) */
 .btn-primary {
-  background-color: var(--accent-primary);
-  color: white;
+  background: var(--grad-primary);
+  color: var(--text-white);
+  padding: 14px 24px;
+  font-weight: 600;
+}
+.btn-primary:hover:not(:disabled) {
+  opacity: 0.95;
+  transform: scale(1.02);
+  box-shadow: var(--shadow-btn-primary);
+  background: var(--grad-primary-hover);
 }
 
-.btn-primary:hover {
-  background-color: var(--accent-hover);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+/* Purchase/Deal Buttons (Purchase Vehicle, Complete Sale) */
+.btn-purchase {
+  background: var(--grad-secondary);
+  color: var(--text-white);
+  padding: 12px 16px;
+  font-weight: 600;
+}
+.btn-purchase:hover:not(:disabled) {
+  opacity: 0.95;
+  transform: scale(1.02);
+  box-shadow: var(--shadow-btn-secondary);
+  background: var(--grad-secondary-hover);
 }
 
-.btn-secondary {
-  background-color: var(--surface-color);
+/* Admin/Premium Actions (Restock, Update, Manage) */
+.btn-admin {
+  background: var(--grad-accent);
   color: var(--text-primary);
-  border: 1px solid var(--border-color);
+  padding: 12px 16px;
+  font-weight: 600;
+}
+.btn-admin:hover:not(:disabled) {
+  opacity: 0.95;
+  transform: scale(1.02);
+  box-shadow: var(--shadow-btn-accent);
+  background: var(--grad-accent-hover);
 }
 
-.btn-secondary:hover {
-  background-color: var(--accent-light);
-  border-color: var(--text-muted);
+/* Secondary/Outline Button */
+.btn-secondary {
+  background: transparent;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  padding: 10px 22px;
+  font-weight: 600;
+  box-shadow: none;
+}
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(0,102,204,0.1);
+  transform: scale(1.02);
 }
 
+/* Danger Button */
 .btn-danger {
-  background-color: var(--danger-bg);
-  color: var(--danger);
-  border: 1px solid transparent;
+  background: var(--error);
+  color: var(--text-white);
+  padding: 12px 16px;
+  font-weight: 600;
+}
+.btn-danger:hover:not(:disabled) {
+  background: #991b1b;
+  transform: scale(1.02);
+  box-shadow: 0 15px 30px rgba(220,38,38,0.2);
 }
 
-.btn-danger:hover {
-  background-color: var(--danger);
-  color: white;
-}
-
-.btn-success {
-  background-color: var(--success-bg);
-  color: var(--success);
-  border: 1px solid transparent;
-}
-
-.btn-success:hover {
-  background-color: var(--success);
-  color: white;
-}
-
-/* Global Input Styles */
+/* ============================
+   Global Input Styles
+   ============================ */
 .input-field {
   width: 100%;
-  padding: 10px 14px;
-  font-size: 14px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  background-color: var(--surface-color);
+  padding: 12px 16px;
+  font-size: 16px;
+  font-family: inherit;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-primary);
   color: var(--text-primary);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .input-field:focus {
   outline: none;
-  border-color: var(--info);
-  box-shadow: 0 0 0 3px var(--info-bg);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
 }
 
-/* Badges */
+.input-field:disabled {
+  background-color: var(--bg-secondary);
+  opacity: 0.6;
+}
+
+.input-field::placeholder {
+  color: var(--text-secondary);
+}
+
+/* ============================
+   Badges
+   ============================ */
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 4px 10px;
-  font-size: 11px;
+  padding: 4px 12px;
+  font-size: 12px;
   font-weight: 600;
   border-radius: var(--radius-full);
   text-transform: uppercase;
@@ -144,15 +222,29 @@ body {
 }
 
 .badge-default {
-  background-color: var(--accent-light);
-  color: var(--text-secondary);
+  background-color: var(--border-color);
+  color: var(--text-primary);
 }
 
-/* Page Layout */
+/* ============================
+   Page Layout
+   ============================ */
 .page-container {
-  padding: 32px 24px;
-  max-width: 1200px;
+  padding: 32px;
+  max-width: 1280px;
   margin: 0 auto;
+}
+
+@media (max-width: 1023px) {
+  .page-container {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .page-container {
+    padding: 16px;
+  }
 }
 
 .page-header {
@@ -162,23 +254,34 @@ body {
   align-items: center;
 }
 
-.page-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 4px;
-  letter-spacing: -0.02em;
+/* ============================
+   Links
+   ============================ */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+a:hover {
+  color: #003d99;
+  text-decoration: underline;
 }
 
-.page-subtitle {
-  font-size: 14px;
-  color: var(--text-secondary);
+/* ============================
+   Toastify Overrides
+   ============================ */
+.Toastify__toast {
+  border-radius: 8px;
+  padding: 16px 20px;
+  font-family: inherit;
 }
-
-/* Glassmorphism */
-.glass {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border-color);
+.Toastify__toast--success {
+  background: var(--success);
+  color: var(--text-white);
+  box-shadow: 0 10px 25px rgba(5,150,105,0.2);
+}
+.Toastify__toast--error {
+  background: var(--error);
+  color: var(--text-white);
+  box-shadow: 0 10px 25px rgba(220,38,38,0.2);
 }

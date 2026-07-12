@@ -10,6 +10,10 @@ export const AdminPage = () => {
   const [vehicles, setVehicles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Inline filter state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+
   // Modal state
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingVehicle, setEditingVehicle] = useState(null);
@@ -30,6 +34,18 @@ export const AdminPage = () => {
       setIsLoading(false);
     }
   };
+
+  // Client-side filtering for instant feedback
+  const filteredVehicles = vehicles.filter((v) => {
+    const q = searchQuery.toLowerCase();
+    const matchesQuery =
+      !q ||
+      v.make.toLowerCase().includes(q) ||
+      v.model.toLowerCase().includes(q);
+    const matchesCategory =
+      !categoryFilter || v.category === categoryFilter;
+    return matchesQuery && matchesCategory;
+  });
 
   const handleAddClick = () => {
     setEditingVehicle(null);
@@ -79,8 +95,6 @@ export const AdminPage = () => {
 
   const handleFormSaved = (savedVehicle) => {
     setIsFormOpen(false);
-    // If we were editing, replace the existing vehicle in the list.
-    // If we were adding, append the new vehicle to the list.
     if (editingVehicle) {
       setVehicles((prev) =>
         prev.map((v) => (v.id === savedVehicle.id ? savedVehicle : v)),
@@ -94,18 +108,53 @@ export const AdminPage = () => {
     <div className="page-container">
       <main>
         <div className="admin-header">
-          <h2 className="page-title">Inventory Management</h2>
+          <div>
+            <h1 className="page-title">ADMIN PANEL</h1>
+            <p className="page-subtitle">{vehicles.length} vehicles in inventory</p>
+          </div>
           <button onClick={handleAddClick} className="btn btn-primary">
-            + Add New Vehicle
+            + Add Vehicle
           </button>
+        </div>
+
+        {/* ── Sleek Inline Filter Bar ── */}
+        <div className="admin-filter-bar">
+          <div className="filter-bar-search">
+            <svg className="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search by make or model..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="filter-bar-input"
+            />
+          </div>
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="filter-bar-select"
+          >
+            <option value="">All Categories</option>
+            <option value="SUV">SUV</option>
+            <option value="SEDAN">Sedan</option>
+            <option value="TRUCK">Truck</option>
+            <option value="EV">EV</option>
+            <option value="HATCHBACK">Hatchback</option>
+          </select>
         </div>
 
         {isLoading ? (
           <Spinner message="Loading inventory data..." />
-        ) : vehicles.length === 0 ? (
+        ) : filteredVehicles.length === 0 ? (
           <EmptyState
-            message="Your inventory is empty"
-            subMessage="Click the '+ Add New Vehicle' button above to start stocking your dealership."
+            message={vehicles.length === 0 ? "Your inventory is empty" : "No matching vehicles"}
+            subMessage={vehicles.length === 0
+              ? "Click '+ Add Vehicle' to start stocking your dealership."
+              : "Try adjusting your search or category filter."
+            }
           />
         ) : (
           <div className="table-container">
@@ -121,9 +170,9 @@ export const AdminPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {vehicles.map((vehicle) => (
+                {filteredVehicles.map((vehicle) => (
                   <tr key={vehicle.id}>
-                    <td>{vehicle.make}</td>
+                    <td className="td-bold">{vehicle.make}</td>
                     <td>{vehicle.model}</td>
                     <td>
                       <span className="badge badge-default">
@@ -132,12 +181,7 @@ export const AdminPage = () => {
                     </td>
                     <td>${vehicle.price.toFixed(2)}</td>
                     <td style={{ textAlign: "center" }}>
-                      <span
-                        style={{
-                          fontWeight: "600",
-                          color: vehicle.quantityInStock > 0 ? "var(--success)" : "var(--danger)",
-                        }}
-                      >
+                      <span className={`stock-badge ${vehicle.quantityInStock > 0 ? "stock-in" : "stock-out"}`}>
                         {vehicle.quantityInStock}
                       </span>
                     </td>
@@ -145,13 +189,13 @@ export const AdminPage = () => {
                       <div className="action-buttons">
                         <button
                           onClick={() => handleEditClick(vehicle)}
-                          className="btn btn-secondary"
+                          className="btn btn-admin"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleRestockClick(vehicle.id)}
-                          className="btn btn-success"
+                          className="btn btn-admin"
                         >
                           Restock
                         </button>

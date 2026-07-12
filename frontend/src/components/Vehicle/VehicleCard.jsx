@@ -42,17 +42,24 @@ export const VehicleCard = ({ vehicle, onUpdate }) => {
       </div>
       
       <div className="price">{formattedPrice}</div>
-      <div className={`stock ${isOutOfStock ? "out-of-stock" : ""}`}>
-        {isOutOfStock ? "Out of Stock" : `${vehicle.quantityInStock} in stock`}
+      <div className="stock">
+        {isOutOfStock ? (
+          <span className="badge" style={{ backgroundColor: "#f3f4f6", color: "#6b7280", textDecoration: "line-through" }}>
+            Out of Stock
+          </span>
+        ) : (
+          <span className="badge" style={{ backgroundColor: "var(--success)", color: "white" }}>
+            {vehicle.quantityInStock} in stock
+          </span>
+        )}
       </div>
 
       <button
-        className="btn btn-primary purchase-btn"
+        className="btn btn-purchase purchase-btn"
         onClick={handlePurchase}
         disabled={isOutOfStock || isPurchasing}
-        style={{ opacity: isOutOfStock ? 0.5 : 1, cursor: isOutOfStock ? "not-allowed" : "pointer" }}
       >
-        {isPurchasing ? "Processing..." : "Purchase"}
+        {isPurchasing ? "Processing..." : "Purchase Vehicle"}
       </button>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./Vehicle.css";
+import "./VehicleSearch.css";
 
 export const VehicleSearch = ({ onSearch }) => {
   const [searchParams, setSearchParams] = useState({
@@ -72,14 +72,19 @@ export const VehicleSearch = ({ onSearch }) => {
 
         <div className="search-group">
           <label className="search-label">Category</label>
-          <input
-            type="text"
+          <select
             name="category"
             value={searchParams.category}
             onChange={handleChange}
-            placeholder="e.g. Sedan"
             className="input-field"
-          />
+          >
+            <option value="">All Categories</option>
+            <option value="SUV">SUV</option>
+            <option value="SEDAN">SEDAN</option>
+            <option value="TRUCK">TRUCK</option>
+            <option value="EV">EV</option>
+            <option value="HATCHBACK">HATCHBACK</option>
+          </select>
         </div>
 
         <div className="search-group">

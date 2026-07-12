@@ -1,0 +1,143 @@
+/* ========================================
+   Hero Section
+   ======================================== */
+.hero-section {
+  background: var(--grad-primary);
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.hero-title {
+  color: var(--text-white);
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.hero-subtitle {
+  color: rgba(255,255,255,0.9);
+  font-size: 18px;
+  font-weight: 400;
+}
+
+/* ========================================
+   STOREFRONT: Sidebar + Grid Layout
+   ======================================== */
+.storefront-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 32px;
+  align-items: start;
+  position: relative;
+  z-index: 10;
+}
+
+/* ── Sidebar Filter Panel ── */
+.filter-sidebar {
+  background-color: var(--bg-primary);
+  border: var(--border-premium);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  position: sticky;
+  top: 100px;
+  box-shadow: var(--shadow-card);
+}
+
+.filter-sidebar-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 24px;
+}
+
+.filter-group {
+  margin-bottom: 18px;
+}
+
+.filter-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+
+.filter-divider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 20px 0;
+}
+
+.price-range-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.price-range-row .input-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.price-range-sep {
+  color: var(--text-secondary);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.filter-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.filter-actions .btn {
+  width: 100%;
+  justify-content: center;
+}
+
+/* ── Vehicle Grid Area ── */
+.vehicle-grid-area {
+  min-width: 0;
+}
+
+.vehicle-grid-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.vehicle-count {
+  font-size: 16px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .hero-section {
+    height: 200px;
+    border-radius: 0;
+  }
+  .hero-title {
+    font-size: 32px;
+  }
+  .storefront-layout {
+    grid-template-columns: 1fr;
+  }
+  .filter-sidebar {
+    position: static;
+  }
+}

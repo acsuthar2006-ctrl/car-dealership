@@ -8,8 +8,8 @@
 }
 
 .search-form {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 16px;
   align-items: flex-end;
 }
@@ -17,7 +17,6 @@
 .search-group {
   display: flex;
   flex-direction: column;
-  flex: 1 1 140px;
 }
 
 .search-label {
@@ -30,7 +29,8 @@
 .search-actions {
   display: flex;
   gap: 12px;
-  flex: 1 1 200px;
+  grid-column: 1 / -1; /* Make buttons span full width at the bottom */
+  margin-top: 8px;
 }
 
 .search-actions .btn {
