@@ -34,18 +34,15 @@ export const HomePage = () => {
   };
 
   return (
-    <div
-      className="page-container"
-      style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}
-    >
+    <div className="page-container">
       <main>
         <VehicleSearch onSearch={fetchVehicles} />
 
         {isLoading ? (
           <Spinner message="Fetching inventory..." />
         ) : vehicles.length === 0 ? (
-          <EmptyState 
-            message="No vehicles found" 
+          <EmptyState
+            message="No vehicles found"
             subMessage="Try adjusting your search filters to find what you're looking for."
           />
         ) : (

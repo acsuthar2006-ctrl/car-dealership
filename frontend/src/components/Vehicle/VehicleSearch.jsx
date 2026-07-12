@@ -44,115 +44,46 @@ export const VehicleSearch = ({ onSearch }) => {
   };
 
   return (
-    <div
-      className="search-container"
-      style={{
-        backgroundColor: "#f9f9f9",
-        padding: "20px",
-        borderRadius: "8px",
-        marginBottom: "20px",
-        border: "1px solid #ddd",
-      }}
-    >
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "15px",
-          alignItems: "flex-end",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            flex: "1 1 150px",
-          }}
-        >
-          <label
-            style={{ fontSize: "12px", color: "#555", marginBottom: "4px" }}
-          >
-            Make
-          </label>
+    <div className="search-container">
+      <form onSubmit={handleSubmit} className="search-form">
+        <div className="search-group">
+          <label className="search-label">Make</label>
           <input
             type="text"
             name="make"
             value={searchParams.make}
             onChange={handleChange}
             placeholder="e.g. Toyota"
-            style={{
-              padding: "8px",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-            }}
+            className="input-field"
           />
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            flex: "1 1 150px",
-          }}
-        >
-          <label
-            style={{ fontSize: "12px", color: "#555", marginBottom: "4px" }}
-          >
-            Model
-          </label>
+        <div className="search-group">
+          <label className="search-label">Model</label>
           <input
             type="text"
             name="model"
             value={searchParams.model}
             onChange={handleChange}
             placeholder="e.g. Camry"
-            style={{
-              padding: "8px",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-            }}
+            className="input-field"
           />
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            flex: "1 1 150px",
-          }}
-        >
-          <label
-            style={{ fontSize: "12px", color: "#555", marginBottom: "4px" }}
-          >
-            Category
-          </label>
+        <div className="search-group">
+          <label className="search-label">Category</label>
           <input
             type="text"
             name="category"
             value={searchParams.category}
             onChange={handleChange}
             placeholder="e.g. Sedan"
-            style={{
-              padding: "8px",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-            }}
+            className="input-field"
           />
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            flex: "1 1 100px",
-          }}
-        >
-          <label
-            style={{ fontSize: "12px", color: "#555", marginBottom: "4px" }}
-          >
-            Min Price
-          </label>
+        <div className="search-group">
+          <label className="search-label">Min Price</label>
           <input
             type="number"
             name="minPrice"
@@ -160,26 +91,12 @@ export const VehicleSearch = ({ onSearch }) => {
             onChange={handleChange}
             placeholder="0"
             min="0"
-            style={{
-              padding: "8px",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-            }}
+            className="input-field"
           />
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            flex: "1 1 100px",
-          }}
-        >
-          <label
-            style={{ fontSize: "12px", color: "#555", marginBottom: "4px" }}
-          >
-            Max Price
-          </label>
+        <div className="search-group">
+          <label className="search-label">Max Price</label>
           <input
             type="number"
             name="maxPrice"
@@ -187,42 +104,15 @@ export const VehicleSearch = ({ onSearch }) => {
             onChange={handleChange}
             placeholder="50000"
             min="0"
-            style={{
-              padding: "8px",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-            }}
+            className="input-field"
           />
         </div>
 
-        <div style={{ display: "flex", gap: "10px", flex: "1 1 200px" }}>
-          <button
-            type="submit"
-            style={{
-              flex: 1,
-              padding: "10px",
-              backgroundColor: "#333",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
+        <div className="search-actions">
+          <button type="submit" className="btn btn-primary">
             Search
           </button>
-          <button
-            type="button"
-            onClick={handleClear}
-            style={{
-              flex: 1,
-              padding: "10px",
-              backgroundColor: "#e0e0e0",
-              color: "#333",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
+          <button type="button" onClick={handleClear} className="btn btn-secondary">
             Clear
           </button>
         </div>

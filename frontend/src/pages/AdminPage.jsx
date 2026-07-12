@@ -4,6 +4,7 @@ import { VehicleForm } from "../components/Admin/VehicleForm";
 import { Spinner } from "../components/UI/Spinner";
 import { EmptyState } from "../components/UI/EmptyState";
 import { toast } from "react-toastify";
+import "./AdminPage.css";
 
 export const AdminPage = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -90,32 +91,11 @@ export const AdminPage = () => {
   };
 
   return (
-    <div
-      className="page-container"
-      style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}
-    >
+    <div className="page-container">
       <main>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "20px",
-          }}
-        >
-          <h2>Inventory Management</h2>
-          <button
-            onClick={handleAddClick}
-            style={{
-              padding: "10px 20px",
-              backgroundColor: "#4CAF50",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontWeight: "bold",
-            }}
-          >
+        <div className="admin-header">
+          <h2 className="page-title">Inventory Management</h2>
+          <button onClick={handleAddClick} className="btn btn-primary">
             + Add New Vehicle
           </button>
         </div>
@@ -128,116 +108,63 @@ export const AdminPage = () => {
             subMessage="Click the '+ Add New Vehicle' button above to start stocking your dealership."
           />
         ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table
-              style={{
-                width: "100%",
-                borderCollapse: "collapse",
-                backgroundColor: "white",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-              }}
-            >
+          <div className="table-container">
+            <table className="admin-table">
               <thead>
-                <tr
-                  style={{
-                    backgroundColor: "#f5f5f5",
-                    borderBottom: "2px solid #ddd",
-                  }}
-                >
-                  <th style={{ padding: "12px", textAlign: "left" }}>Make</th>
-                  <th style={{ padding: "12px", textAlign: "left" }}>Model</th>
-                  <th style={{ padding: "12px", textAlign: "left" }}>
-                    Category
-                  </th>
-                  <th style={{ padding: "12px", textAlign: "left" }}>Price</th>
-                  <th style={{ padding: "12px", textAlign: "center" }}>
-                    Stock
-                  </th>
-                  <th style={{ padding: "12px", textAlign: "center" }}>
-                    Actions
-                  </th>
+                <tr>
+                  <th>Make</th>
+                  <th>Model</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th style={{ textAlign: "center" }}>Stock</th>
+                  <th style={{ textAlign: "center" }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {vehicles.map((vehicle) => (
-                  <tr
-                    key={vehicle.id}
-                    style={{ borderBottom: "1px solid #eee" }}
-                  >
-                    <td style={{ padding: "12px" }}>{vehicle.make}</td>
-                    <td style={{ padding: "12px" }}>{vehicle.model}</td>
-                    <td style={{ padding: "12px" }}>
-                      <span
-                        style={{
-                          backgroundColor: "#e3f2fd",
-                          color: "#1565c0",
-                          padding: "4px 8px",
-                          borderRadius: "12px",
-                          fontSize: "12px",
-                        }}
-                      >
+                  <tr key={vehicle.id}>
+                    <td>{vehicle.make}</td>
+                    <td>{vehicle.model}</td>
+                    <td>
+                      <span className="badge badge-default">
                         {vehicle.category}
                       </span>
                     </td>
-                    <td style={{ padding: "12px" }}>
-                      ${vehicle.price.toFixed(2)}
-                    </td>
-                    <td style={{ padding: "12px", textAlign: "center" }}>
+                    <td>${vehicle.price.toFixed(2)}</td>
+                    <td style={{ textAlign: "center" }}>
                       <span
                         style={{
-                          fontWeight: "bold",
-                          color:
-                            vehicle.quantityInStock > 0 ? "#2e7d32" : "#d32f2f",
+                          fontWeight: "600",
+                          color: vehicle.quantityInStock > 0 ? "var(--success)" : "var(--danger)",
                         }}
                       >
                         {vehicle.quantityInStock}
                       </span>
                     </td>
-                    <td style={{ padding: "12px", textAlign: "center" }}>
-                      <button
-                        onClick={() => handleEditClick(vehicle)}
-                        style={{
-                          marginRight: "8px",
-                          padding: "6px 12px",
-                          backgroundColor: "#fff",
-                          border: "1px solid #ccc",
-                          borderRadius: "4px",
-                          cursor: "pointer",
-                        }}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleRestockClick(vehicle.id)}
-                        style={{
-                          marginRight: "8px",
-                          padding: "6px 12px",
-                          backgroundColor: "#e8f5e9",
-                          color: "#2e7d32",
-                          border: "1px solid #a5d6a7",
-                          borderRadius: "4px",
-                          cursor: "pointer",
-                        }}
-                      >
-                        Restock
-                      </button>
-                      <button
-                        onClick={() => handleDeleteClick(vehicle.id)}
-                        style={{
-                          padding: "6px 12px",
-                          backgroundColor: "#ffebee",
-                          color: "#c62828",
-                          border: "1px solid #ef9a9a",
-                          borderRadius: "4px",
-                          cursor: "pointer",
-                        }}
-                      >
-                        Delete
-                      </button>
+                    <td>
+                      <div className="action-buttons">
+                        <button
+                          onClick={() => handleEditClick(vehicle)}
+                          className="btn btn-secondary"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleRestockClick(vehicle.id)}
+                          className="btn btn-success"
+                        >
+                          Restock
+                        </button>
+                        <button
+                          onClick={() => handleDeleteClick(vehicle.id)}
+                          className="btn btn-danger"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
-
               </tbody>
             </table>
           </div>

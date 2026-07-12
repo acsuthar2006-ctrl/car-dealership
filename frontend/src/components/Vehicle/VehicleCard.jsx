@@ -34,19 +34,23 @@ export const VehicleCard = ({ vehicle, onUpdate }) => {
 
   return (
     <div className="vehicle-card">
-      <h3>
-        {vehicle.make} {vehicle.model}
-      </h3>
-      <span className="category">{vehicle.category}</span>
+      <div className="vehicle-card-header">
+        <h3>
+          {vehicle.make} {vehicle.model}
+        </h3>
+        <span className="badge badge-default">{vehicle.category}</span>
+      </div>
+      
       <div className="price">{formattedPrice}</div>
       <div className={`stock ${isOutOfStock ? "out-of-stock" : ""}`}>
         {isOutOfStock ? "Out of Stock" : `${vehicle.quantityInStock} in stock`}
       </div>
 
       <button
-        className="purchase-btn"
+        className="btn btn-primary purchase-btn"
         onClick={handlePurchase}
         disabled={isOutOfStock || isPurchasing}
+        style={{ opacity: isOutOfStock ? 0.5 : 1, cursor: isOutOfStock ? "not-allowed" : "pointer" }}
       >
         {isPurchasing ? "Processing..." : "Purchase"}
       </button>

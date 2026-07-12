@@ -9,11 +9,10 @@ export const Layout = () => {
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: "#f4f6f8",
       }}
     >
       <NavBar />
-      <main style={{ flex: 1, padding: "24px" }}>
+      <main style={{ flex: 1 }}>
         <Outlet />
       </main>
     </div>
