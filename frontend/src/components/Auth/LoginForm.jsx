@@ -20,10 +20,28 @@ export const LoginForm = () => {
       toast.success('Successfully logged in!');
       navigate('/'); // Redirect to dashboard
     } catch (err) {
-      // The backend returns 401 for invalid credentials
-      const message = err.response?.status === 401
-        ? 'Invalid username or password'
-        : 'An error occurred during login.';
+      console.error("Login error:", err);
+      const status = err.response?.status;
+      const responseData = err.response?.data;
+      const backendError = responseData?.error;
+      
+      let message = 'An error occurred during login.';
+      if (status === 401 || status === 403) {
+         message = backendError || 'Invalid username or password';
+      } else if (status === 400 && responseData) {
+         // Backend sends { fieldName: errorMessage } for validation errors
+         const validationErrors = Object.values(responseData);
+         if (validationErrors.length > 0) {
+           message = validationErrors.join(', ');
+         } else {
+           message = 'Invalid input data';
+         }
+      } else if (backendError) {
+         message = backendError;
+      } else if (err.message) {
+         message = err.message;
+      }
+      
       toast.error(message);
     } finally {
       setIsLoading(false);

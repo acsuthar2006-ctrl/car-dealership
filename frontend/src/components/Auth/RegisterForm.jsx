@@ -28,10 +28,27 @@ export const RegisterForm = () => {
       toast.success('Registration successful! Please login.');
       navigate('/login'); // Redirect to login on success
     } catch (err) {
-      // Backend returns 409 Conflict if username/email already exists
-      const message = err.response?.status === 409
-        ? 'Username or email already exists'
-        : err.response?.data?.message || 'Registration failed. Please try again.';
+      console.error("Register error:", err);
+      const status = err.response?.status;
+      const responseData = err.response?.data;
+      const backendError = responseData?.error || responseData?.message;
+
+      let message = 'Registration failed. Please try again.';
+      
+      if (status === 409) {
+        message = 'Username or email already exists';
+      } else if (status === 400 && responseData) {
+        // Backend sends { fieldName: errorMessage } for validation errors
+        const validationErrors = Object.values(responseData);
+        if (validationErrors.length > 0) {
+          message = validationErrors.join(', ');
+        }
+      } else if (backendError) {
+        message = backendError;
+      } else if (err.message) {
+        message = err.message;
+      }
+      
       toast.error(message);
     } finally {
       setIsLoading(false);
