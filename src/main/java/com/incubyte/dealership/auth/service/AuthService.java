@@ -43,7 +43,7 @@ public class AuthService {
 
 	public JwtResponse login(LoginRequest request) {
 		User user = userRepository.findByUsername(request.username())
-				.orElseThrow(() -> new InvalidCredentialsException());
+				.orElseThrow(InvalidCredentialsException::new);
 
 		if (!passwordEncoder.matches(request.password(), user.getPassword())) {
 			log.warn("Invalid password attempt for username: {}", request.username());

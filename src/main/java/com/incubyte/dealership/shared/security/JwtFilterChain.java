@@ -53,7 +53,14 @@ public class JwtFilterChain extends OncePerRequestFilter {
 			return;
 		}
 
-		UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+		UserDetails userDetails;
+		try {
+			userDetails = customUserDetailsService.loadUserByUsername(username);
+		} catch (UsernameNotFoundException e) {
+			log.debug("User from JWT not found in database: {}", e.getMessage());
+			filterChain.doFilter(request, response);
+			return;
+		}
 
 		if (!jwtService.isTokenValid(token, userDetails)) {
 			filterChain.doFilter(request, response);

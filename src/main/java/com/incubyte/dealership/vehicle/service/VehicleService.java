@@ -51,12 +51,23 @@ public class VehicleService {
 
     public List<VehicleResponse> searchVehicles(String make, String model, String category, Double minPrice,
             Double maxPrice) {
-        Specification<Vehicle> spec = Specification
-                .where(VehicleSpecification.hasMake(make))
-                .and(VehicleSpecification.hasModel(model))
-                .and(VehicleSpecification.hasCategory(category))
-                .and(VehicleSpecification.priceGreaterThanOrEqualTo(minPrice))
-                .and(VehicleSpecification.priceLessThanOrEqualTo(maxPrice));
+        Specification<Vehicle> spec = Specification.where(null);
+
+        if (make != null) {
+            spec = spec.and(VehicleSpecification.hasMake(make));
+        }
+        if (model != null) {
+            spec = spec.and(VehicleSpecification.hasModel(model));
+        }
+        if (category != null) {
+            spec = spec.and(VehicleSpecification.hasCategory(category));
+        }
+        if (minPrice != null) {
+            spec = spec.and(VehicleSpecification.priceGreaterThanOrEqualTo(minPrice));
+        }
+        if (maxPrice != null) {
+            spec = spec.and(VehicleSpecification.priceLessThanOrEqualTo(maxPrice));
+        }
 
         return vehicleRepository.findAll(spec).stream()
                 .map(this::mapToResponse)
