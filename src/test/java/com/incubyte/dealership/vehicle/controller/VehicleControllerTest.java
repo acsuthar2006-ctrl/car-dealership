@@ -57,7 +57,7 @@ class VehicleControllerTest {
 	@Test
 	void addVehicle_withValidPayload_returns201Created() throws Exception {
 		// ARRANGE
-		var request = new VehicleRequest("Toyota", "Camry", "SEDAN", 25000.00);
+		var request = new VehicleRequest("Toyota", "Camry", "SEDAN", 25000.00, 1);
 		UUID vehicleId = UUID.randomUUID();
 		var response = new VehicleResponse(vehicleId, "Toyota", "Camry", "SEDAN", 25000.00, 1);
 
@@ -78,7 +78,7 @@ class VehicleControllerTest {
 	@Test
 	void addVehicle_withDuplicateMakeAndModel_returns409Conflict() throws Exception {
 		// ARRANGE
-		var request = new VehicleRequest("Toyota", "Camry", "SEDAN", 25000.00);
+		var request = new VehicleRequest("Toyota", "Camry", "SEDAN", 25000.00, 1);
 
 		when(vehicleService.addVehicle(any())).thenThrow(
 				new VehicleAlreadyExistsException("Toyota", "Camry"));
@@ -94,7 +94,7 @@ class VehicleControllerTest {
 	@Test
 	void addVehicle_withNegativePrice_returns400BadRequest() throws Exception {
 		// ARRANGE
-		var request = new VehicleRequest("Toyota", "Camry", "SEDAN", -10000.0);
+		var request = new VehicleRequest("Toyota", "Camry", "SEDAN", -10000.0, 1);
 
 		// ACT + ASSERT
 		mockMvc.perform(post(VEHICLES_ENDPOINT)
@@ -106,7 +106,7 @@ class VehicleControllerTest {
 	@Test
 	void addVehicle_withBlankStrings_returns400BadRequest() throws Exception {
 		// ARRANGE
-		var request = new VehicleRequest("", "", "", 25000.0);
+		var request = new VehicleRequest("", "", "", 25000.0, 1);
 
 		// ACT + ASSERT
 		mockMvc.perform(post(VEHICLES_ENDPOINT)
@@ -235,7 +235,7 @@ class VehicleControllerTest {
 	void updateVehicle_withValidPayload_returns200Ok() throws Exception {
 		// ARRANGE
 		UUID id = UUID.randomUUID();
-		var request = new VehicleRequest("Honda", "Accord", "SEDAN", 27000.00);
+		var request = new VehicleRequest("Honda", "Accord", "SEDAN", 27000.00, 1);
 		var response = new VehicleResponse(id, "Honda", "Accord", "SEDAN", 27000.00, 10);
 
 		when(vehicleService.updateVehicle(id, request)).thenReturn(response);
@@ -253,7 +253,7 @@ class VehicleControllerTest {
 	void updateVehicle_withNonExistentId_returns404NotFound() throws Exception {
 		// ARRANGE
 		UUID nonExistentId = UUID.randomUUID();
-		var request = new VehicleRequest("Honda", "Accord", "SEDAN", 27000.00);
+		var request = new VehicleRequest("Honda", "Accord", "SEDAN", 27000.00, 1);
 
 		when(vehicleService.updateVehicle(nonExistentId, request))
 				.thenThrow(new VehicleNotFoundException(nonExistentId));

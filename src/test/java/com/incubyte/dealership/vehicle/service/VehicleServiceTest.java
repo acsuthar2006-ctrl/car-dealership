@@ -30,7 +30,7 @@ class VehicleServiceTest {
     @Test
     void addVehicle_withValidRequest_createsVehicleWithOneStock() {
         // ARRANGE
-        var request = new VehicleRequest("Toyota", "Camry", "SEDAN", 25000.00);
+        var request = new VehicleRequest("Toyota", "Camry", "SEDAN", 25000.00, 1);
         UUID generatedId = UUID.randomUUID();
 
         Vehicle savedVehicle = Vehicle.builder()
@@ -60,7 +60,7 @@ class VehicleServiceTest {
     @Test
     void addVehicle_withDuplicateMakeAndModel_throwsException() {
         // ARRANGE
-        var request = new VehicleRequest("Toyota", "Camry", "SEDAN", 25000.00);
+        var request = new VehicleRequest("Toyota", "Camry", "SEDAN", 25000.00, 1);
         when(vehicleRepository.existsByMakeIgnoreCaseAndModelIgnoreCase("Toyota", "Camry")).thenReturn(true);
 
         // ACT + ASSERT
