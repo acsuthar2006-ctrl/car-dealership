@@ -1,13 +1,13 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
-import { jwtDecode } from 'jwt-decode';
-import { authService } from '../services/authService';
+import React, { createContext, useState, useEffect, useContext } from "react";
+import { jwtDecode } from "jwt-decode";
+import { authService } from "../services/authService";
 
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(localStorage.getItem('token') || null);
+  const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
           setUser({
             username: decoded.sub, // 'sub' usually holds the username in standard JWTs
             roles: decoded.roles || [],
-            isAdmin: decoded.roles?.includes('ROLE_ADMIN') || false
+            isAdmin: decoded.roles?.includes("ROLE_ADMIN") || false,
           });
         }
       } catch (err) {
@@ -37,15 +37,16 @@ export const AuthProvider = ({ children }) => {
 
     // Listen for unauthorized events from our api interceptor
     const handleUnauthorized = () => logout();
-    window.addEventListener('auth:unauthorized', handleUnauthorized);
+    window.addEventListener("auth:unauthorized", handleUnauthorized);
 
-    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
+    return () =>
+      window.removeEventListener("auth:unauthorized", handleUnauthorized);
   }, [token]);
 
   const login = async (username, password) => {
     const data = await authService.login(username, password);
     if (data.token) {
-      localStorage.setItem('token', data.token);
+      localStorage.setItem("token", data.token);
       setToken(data.token);
     }
     return data;
@@ -56,7 +57,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     setToken(null);
     setUser(null);
   };
@@ -68,7 +69,7 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
-    loading
+    loading,
   };
 
   return (

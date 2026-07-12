@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { toast } from 'react-toastify';
-import './AuthForms.css';
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { toast } from "react-toastify";
+import "./AuthForms.css";
 
 export const RegisterForm = () => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ export const RegisterForm = () => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
+      toast.error("Passwords do not match");
       return;
     }
 
@@ -25,30 +25,30 @@ export const RegisterForm = () => {
 
     try {
       await register(username, email, password);
-      toast.success('Registration successful! Please login.');
-      navigate('/login'); // Redirect to login on success
+      toast.success("Registration successful! Please login.");
+      navigate("/login"); // Redirect to login on success
     } catch (err) {
       console.error("Register error:", err);
       const status = err.response?.status;
       const responseData = err.response?.data;
       const backendError = responseData?.error || responseData?.message;
 
-      let message = 'Registration failed. Please try again.';
-      
+      let message = "Registration failed. Please try again.";
+
       if (status === 409) {
-        message = 'Username or email already exists';
+        message = "Username or email already exists";
       } else if (status === 400 && responseData) {
         // Backend sends { fieldName: errorMessage } for validation errors
         const validationErrors = Object.values(responseData);
         if (validationErrors.length > 0) {
-          message = validationErrors.join(', ');
+          message = validationErrors.join(", ");
         }
       } else if (backendError) {
         message = backendError;
       } else if (err.message) {
         message = err.message;
       }
-      
+
       toast.error(message);
     } finally {
       setIsLoading(false);
@@ -106,7 +106,7 @@ export const RegisterForm = () => {
           />
         </div>
         <button type="submit" disabled={isLoading} className="submit-btn">
-          {isLoading ? 'Registering...' : 'Register'}
+          {isLoading ? "Registering..." : "Register"}
         </button>
       </form>
       <p className="auth-link">

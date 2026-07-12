@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { vehicleService } from '../../services/vehicleService';
-import { toast } from 'react-toastify';
-import './Vehicle.css';
+import React, { useState } from "react";
+import { vehicleService } from "../../services/vehicleService";
+import { toast } from "react-toastify";
+import "./Vehicle.css";
 
 export const VehicleCard = ({ vehicle, onUpdate }) => {
   const [isPurchasing, setIsPurchasing] = useState(false);
@@ -17,9 +17,9 @@ export const VehicleCard = ({ vehicle, onUpdate }) => {
     } catch (err) {
       console.error(err);
       if (err.response?.status === 409) {
-        toast.error('Sorry, this vehicle is out of stock!');
+        toast.error("Sorry, this vehicle is out of stock!");
       } else {
-        toast.error('Failed to purchase vehicle.');
+        toast.error("Failed to purchase vehicle.");
       }
     } finally {
       setIsPurchasing(false);
@@ -27,26 +27,28 @@ export const VehicleCard = ({ vehicle, onUpdate }) => {
   };
 
   // Format price as currency
-  const formattedPrice = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD'
+  const formattedPrice = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
   }).format(vehicle.price);
 
   return (
     <div className="vehicle-card">
-      <h3>{vehicle.make} {vehicle.model}</h3>
+      <h3>
+        {vehicle.make} {vehicle.model}
+      </h3>
       <span className="category">{vehicle.category}</span>
       <div className="price">{formattedPrice}</div>
-      <div className={`stock ${isOutOfStock ? 'out-of-stock' : ''}`}>
-        {isOutOfStock ? 'Out of Stock' : `${vehicle.quantityInStock} in stock`}
+      <div className={`stock ${isOutOfStock ? "out-of-stock" : ""}`}>
+        {isOutOfStock ? "Out of Stock" : `${vehicle.quantityInStock} in stock`}
       </div>
-      
-      <button 
+
+      <button
         className="purchase-btn"
         onClick={handlePurchase}
         disabled={isOutOfStock || isPurchasing}
       >
-        {isPurchasing ? 'Processing...' : 'Purchase'}
+        {isPurchasing ? "Processing..." : "Purchase"}
       </button>
     </div>
   );

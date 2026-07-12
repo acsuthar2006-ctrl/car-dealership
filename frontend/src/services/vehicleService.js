@@ -1,16 +1,16 @@
-import api from './api';
+import api from "./api";
 
 export const vehicleService = {
   // Get all vehicles
   getAllVehicles: async () => {
-    const response = await api.get('/vehicles');
+    const response = await api.get("/vehicles");
     return response.data;
   },
 
   // Search vehicles with optional parameters
   searchVehicles: async (params) => {
     // params could be { make: 'Toyota', minPrice: 10000 }
-    const response = await api.get('/vehicles/search', { params });
+    const response = await api.get("/vehicles/search", { params });
     return response.data;
   },
 
@@ -22,7 +22,7 @@ export const vehicleService = {
 
   // Add a new vehicle (Admin only)
   addVehicle: async (vehicleData) => {
-    const response = await api.post('/vehicles', vehicleData);
+    const response = await api.post("/vehicles", vehicleData);
     return response.data;
   },
 
@@ -42,5 +42,5 @@ export const vehicleService = {
   restockVehicle: async (id, quantity) => {
     const response = await api.post(`/vehicles/${id}/restock`, { quantity });
     return response.data;
-  }
+  },
 };
