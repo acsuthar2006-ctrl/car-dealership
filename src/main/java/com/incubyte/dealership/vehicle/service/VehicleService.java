@@ -35,7 +35,7 @@ public class VehicleService {
                 .model(request.model())
                 .category(request.category())
                 .price(request.price())
-                .quantityInStock(1)
+                .quantityInStock(request.quantityInStock() > 0 ? request.quantityInStock() : 1)
                 .build();
 
         Vehicle saved = vehicleRepository.save(vehicle);

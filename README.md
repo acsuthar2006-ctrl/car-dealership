@@ -103,3 +103,9 @@ For the `/vehicles/search` endpoint, I kept going back and forth on whether the 
 Initially, I found it awkward to intentionally write code that fails. The idea of committing broken code (RED state) felt wrong. But over time, I realized the RED commit is proof that the test actually validates something — if it passes without implementation, the test is useless.
 
 **Learning:** The RED step is the most important step in TDD. It proves your test has value.
+
+### 5. The "Username already exists" Masking Bug
+When attempting to add a vehicle from the Admin Dashboard, the backend rejected the request but returned the error message: `"Username or email already exists"`.
+This happened because the `vehicles` table had a strict Flyway check constraint on the `category` column (requiring it to be SUV, SEDAN, TRUCK, EV, or HATCHBACK). When testing with an invalid category ("TempCat"), the database rejected it with a `DataIntegrityViolationException`. However, the `GlobalExceptionHandler` was lazily configured to catch *any* `DataIntegrityViolationException` and blindly return a hardcoded "Username or email already exists" response.
+
+**Learning:** Never blindly catch generic database exceptions like `DataIntegrityViolationException` without inspecting the root cause or specific constraint name. A single generic error message can completely mask the real issue, making debugging unnecessarily difficult. Always enforce the same constraints in the frontend UI (like using dropdowns instead of text inputs) to prevent the error in the first place.

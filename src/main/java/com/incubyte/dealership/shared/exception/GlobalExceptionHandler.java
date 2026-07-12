@@ -32,7 +32,17 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	public ResponseEntity<Map<String, String>> handleDataIntegrityViolationException(
 			DataIntegrityViolationException ex) {
-		return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "Username or email already exists"));
+		String msg = ex.getMessage();
+		if (msg != null && msg.contains("chk_category")) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Category must be one of: SUV, SEDAN, TRUCK, EV, HATCHBACK"));
+		}
+		if (msg != null && msg.contains("users_username_key")) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "Username already exists"));
+		}
+		if (msg != null && msg.contains("users_email_key")) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "Email already exists"));
+		}
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "Database error: " + ex.getMostSpecificCause().getMessage()));
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
