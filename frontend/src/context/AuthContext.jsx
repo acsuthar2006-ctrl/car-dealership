@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
     // Listen for unauthorized events from our api interceptor
     const handleUnauthorized = () => logout();
     window.addEventListener('auth:unauthorized', handleUnauthorized);
-    
+
     return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
   }, [token]);
 
