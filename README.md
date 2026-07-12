@@ -67,18 +67,20 @@ Fully implemented CRUD operations, search, purchase, and restock functionality f
 
 ## 🤖 AI Usage
 
-This project leverages AI coding assistants as pair programming partners throughout the development process.
+This project leverages AI coding assistants as pair programming partners throughout the development process. I actively use **Google Antigravity** and **Claude** to accelerate both backend and frontend development.
 
 | Module | AI Tool Used | Level of AI Involvement |
 |---|---|---|
-| Module 1: Auth & Security | Google Gemini | Light — AI guided architecture and helped troubleshoot integration issues |
-| Module 2: Vehicle Inventory | Google Gemini + Claude | Moderate — AI assisted with TDD flow, code generation, and refactoring while I drove the design and requirements |
+| Module 1: Auth & Security (Backend) | Google Gemini | Light — AI guided architecture and helped troubleshoot integration issues |
+| Module 2: Vehicle Inventory (Backend) | Antigravity + Claude | Moderate — AI assisted with TDD flow, code generation, and refactoring while I drove the design and requirements |
+| Module 3: Frontend Foundations | Antigravity + Claude | Heavy — AI built out the initial React application structure, connected to backend APIs, and implemented routing |
+| Module 4: Luxury UI & Interactive Auth | Antigravity | Heavy — AI implemented a complete CSS overhaul to a "Luxury Auto Dealership" theme and built a complex sliding two-panel interactive authentication page |
 
-**How AI was used in Module 2:**
-* I provided the test cases and requirements; AI helped implement them following the strict RED-GREEN-REFACTOR TDD cycle
-* AI assisted with boilerplate code generation and refactoring passes
-* I made all design decisions — duplicate detection strategy, stock defaults, role-based access, exception handling approach
-* I reviewed, approved, and guided every commit — nothing was merged without my explicit approval
+**How AI was used across the stack:**
+* **Backend:** I provided the test cases, requirements, and TDD rhythm; the AI (Antigravity/Claude) helped implement the controllers, services, and repositories following the RED-GREEN-REFACTOR cycle. The AI also assisted in updating test cases when DTO signatures changed.
+* **Frontend:** I provided strict design requirements (color palettes, border-radii, animations) and UX flows; Antigravity implemented the React components, CSS stylesheets, and smooth interactive animations (like the sliding Auth Page).
+* **Architecture & Debugging:** I made the core design decisions (duplicate detection, stock defaults, role-based access), while the AI served as a senior pair programmer to debug issues like CSS clipping, database constraint violations, and Spring Security configuration.
+* **Review Process:** I reviewed, approved, and guided every commit — the AI executed my implementation plans only after explicit approval.
 
 ---
 
