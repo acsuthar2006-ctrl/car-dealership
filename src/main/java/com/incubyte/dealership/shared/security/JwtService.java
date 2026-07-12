@@ -29,10 +29,10 @@ public class JwtService {
 
 	private Claims getClaimsFromToken(String token) {
 		return Jwts.parser()
-			.verifyWith(getSigningKey())
-			.build()
-			.parseSignedClaims(token)
-			.getPayload();
+				.verifyWith(getSigningKey())
+				.build()
+				.parseSignedClaims(token)
+				.getPayload();
 	}
 
 	public String getUsernameFromToken(String token) {
@@ -52,12 +52,16 @@ public class JwtService {
 	}
 
 	public String generateToken(UserDetails userDetails) {
+		var roles = userDetails.getAuthorities().stream()
+				.map(org.springframework.security.core.GrantedAuthority::getAuthority)
+				.toList();
 
 		return Jwts.builder()
-			.subject(userDetails.getUsername())
-			.expiration(new Date(System.currentTimeMillis() + expirationMs))
-			.issuedAt(new Date())
-			.signWith(getSigningKey())
-			.compact();
+				.subject(userDetails.getUsername())
+				.claim("roles", roles)
+				.expiration(new Date(System.currentTimeMillis() + expirationMs))
+				.issuedAt(new Date())
+				.signWith(getSigningKey())
+				.compact();
 	}
 }

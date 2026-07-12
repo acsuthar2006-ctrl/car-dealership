@@ -4,6 +4,7 @@ import { vehicleService } from "../services/vehicleService";
 import { VehicleList } from "../components/Vehicle/VehicleList";
 import { VehicleSearch } from "../components/Vehicle/VehicleSearch";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 export const HomePage = () => {
   const { user, logout } = useAuth();
@@ -64,19 +65,29 @@ export const HomePage = () => {
             Welcome back, <strong>{user?.username}</strong>!
           </p>
         </div>
-        <button
-          onClick={logout}
-          style={{
-            padding: "8px 16px",
-            backgroundColor: "#f44336",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
-          Logout
-        </button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          {user?.isAdmin && (
+            <Link
+              to="/admin"
+              style={{ padding: "8px 16px", backgroundColor: "#2196F3", color: "white", border: "none", borderRadius: "4px", textDecoration: "none", display: "inline-block", fontWeight: "bold" }}
+            >
+              Admin Dashboard
+            </Link>
+          )}
+          <button
+            onClick={logout}
+            style={{
+              padding: "8px 16px",
+              backgroundColor: "#f44336",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            Logout
+          </button>
+        </div>
       </header>
 
       <main>

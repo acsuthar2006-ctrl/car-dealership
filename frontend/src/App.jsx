@@ -13,6 +13,7 @@ import { ProtectedRoute } from "./components/Auth/ProtectedRoute";
 import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { HomePage } from "./pages/HomePage";
+import { AdminPage } from "./pages/AdminPage";
 
 function App() {
   return (
@@ -25,6 +26,11 @@ function App() {
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<HomePage />} />
+          </Route>
+
+          {/* Admin Routes */}
+          <Route element={<ProtectedRoute requireAdmin={true} />}>
+            <Route path="/admin" element={<AdminPage />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />
