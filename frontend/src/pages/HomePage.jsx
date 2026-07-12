@@ -2,22 +2,22 @@ import React, { useState, useEffect } from "react";
 import { vehicleService } from "../services/vehicleService";
 import { VehicleList } from "../components/Vehicle/VehicleList";
 import { VehicleSearch } from "../components/Vehicle/VehicleSearch";
+import { Spinner } from "../components/UI/Spinner";
+import { EmptyState } from "../components/UI/EmptyState";
 import { toast } from "react-toastify";
 
 export const HomePage = () => {
   const [vehicles, setVehicles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchVehicles = async (searchParams = {}) => {
+  useEffect(() => {
+    fetchVehicles({});
+  }, []);
+
+  const fetchVehicles = async (searchParams) => {
     setIsLoading(true);
     try {
-      // If there are search params, use the search endpoint, otherwise getAll
-      let data;
-      if (Object.keys(searchParams).length > 0) {
-        data = await vehicleService.searchVehicles(searchParams);
-      } else {
-        data = await vehicleService.getAllVehicles();
-      }
+      const data = await vehicleService.searchVehicles(searchParams);
       setVehicles(data);
     } catch (err) {
       console.error(err);
@@ -27,17 +27,9 @@ export const HomePage = () => {
     }
   };
 
-  // Load all vehicles on initial mount
-  useEffect(() => {
-    fetchVehicles();
-  }, []);
-
   const handleUpdateVehicle = (updatedVehicle) => {
-    // Replace the old vehicle data in the list with the newly updated one (e.g., after purchase)
     setVehicles((prevVehicles) =>
-      prevVehicles.map((v) =>
-        v.id === updatedVehicle.id ? updatedVehicle : v,
-      ),
+      prevVehicles.map((v) => (v.id === updatedVehicle.id ? updatedVehicle : v))
     );
   };
 
@@ -50,9 +42,12 @@ export const HomePage = () => {
         <VehicleSearch onSearch={fetchVehicles} />
 
         {isLoading ? (
-          <div style={{ textAlign: "center", padding: "40px" }}>
-            Loading inventory...
-          </div>
+          <Spinner message="Fetching inventory..." />
+        ) : vehicles.length === 0 ? (
+          <EmptyState 
+            message="No vehicles found" 
+            subMessage="Try adjusting your search filters to find what you're looking for."
+          />
         ) : (
           <VehicleList
             vehicles={vehicles}

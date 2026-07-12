@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { vehicleService } from "../services/vehicleService";
 import { VehicleForm } from "../components/Admin/VehicleForm";
+import { Spinner } from "../components/UI/Spinner";
+import { EmptyState } from "../components/UI/EmptyState";
 import { toast } from "react-toastify";
 
 export const AdminPage = () => {
@@ -119,9 +121,12 @@ export const AdminPage = () => {
         </div>
 
         {isLoading ? (
-          <div style={{ textAlign: "center", padding: "40px" }}>
-            Loading inventory...
-          </div>
+          <Spinner message="Loading inventory data..." />
+        ) : vehicles.length === 0 ? (
+          <EmptyState
+            message="Your inventory is empty"
+            subMessage="Click the '+ Add New Vehicle' button above to start stocking your dealership."
+          />
         ) : (
           <div style={{ overflowX: "auto" }}>
             <table
@@ -232,20 +237,7 @@ export const AdminPage = () => {
                     </td>
                   </tr>
                 ))}
-                {vehicles.length === 0 && (
-                  <tr>
-                    <td
-                      colSpan="6"
-                      style={{
-                        padding: "40px",
-                        textAlign: "center",
-                        color: "#666",
-                      }}
-                    >
-                      No vehicles in inventory.
-                    </td>
-                  </tr>
-                )}
+
               </tbody>
             </table>
           </div>
