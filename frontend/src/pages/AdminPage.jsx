@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { vehicleService } from '../services/vehicleService';
 import { VehicleForm } from '../components/Admin/VehicleForm';
 import { toast } from 'react-toastify';
-import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 export const AdminPage = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -13,8 +11,6 @@ export const AdminPage = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingVehicle, setEditingVehicle] = useState(null);
 
-  const { logout } = useAuth();
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchVehicles();
@@ -89,26 +85,6 @@ export const AdminPage = () => {
 
   return (
     <div className="page-container" style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #eee', paddingBottom: '20px', marginBottom: '20px' }}>
-        <div>
-          <h1 style={{ margin: '0 0 8px 0', color: '#1976d2' }}>Admin Dashboard</h1>
-          <p style={{ margin: 0, color: '#666' }}>Manage your dealership inventory</p>
-        </div>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button 
-            onClick={() => navigate('/')}
-            style={{ padding: '8px 16px', backgroundColor: '#e0e0e0', color: '#333', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-          >
-            Storefront
-          </button>
-          <button 
-            onClick={logout}
-            style={{ padding: '8px 16px', backgroundColor: '#f44336', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-          >
-            Logout
-          </button>
-        </div>
-      </header>
 
       <main>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>

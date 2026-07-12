@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
 import { vehicleService } from "../services/vehicleService";
 import { VehicleList } from "../components/Vehicle/VehicleList";
 import { VehicleSearch } from "../components/Vehicle/VehicleSearch";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
 
 export const HomePage = () => {
-  const { user, logout } = useAuth();
   const [vehicles, setVehicles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -49,46 +46,7 @@ export const HomePage = () => {
       className="page-container"
       style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}
     >
-      <header
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          borderBottom: "1px solid #eee",
-          paddingBottom: "20px",
-          marginBottom: "20px",
-        }}
-      >
-        <div>
-          <h1 style={{ margin: "0 0 8px 0" }}>Car Dealership Inventory</h1>
-          <p style={{ margin: 0, color: "#666" }}>
-            Welcome back, <strong>{user?.username}</strong>!
-          </p>
-        </div>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          {user?.isAdmin && (
-            <Link
-              to="/admin"
-              style={{ padding: "8px 16px", backgroundColor: "#2196F3", color: "white", border: "none", borderRadius: "4px", textDecoration: "none", display: "inline-block", fontWeight: "bold" }}
-            >
-              Admin Dashboard
-            </Link>
-          )}
-          <button
-            onClick={logout}
-            style={{
-              padding: "8px 16px",
-              backgroundColor: "#f44336",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
-            Logout
-          </button>
-        </div>
-      </header>
+
 
       <main>
         <VehicleSearch onSearch={fetchVehicles} />
