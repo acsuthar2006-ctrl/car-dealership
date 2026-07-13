@@ -1,7 +1,12 @@
 package com.incubyte.dealership.purchase;
 
+import com.incubyte.dealership.auth.entity.Role;
 import com.incubyte.dealership.auth.repository.UserRepository;
 import com.incubyte.dealership.auth.entity.User;
+import com.incubyte.dealership.purchase.entity.Purchase;
+import com.incubyte.dealership.purchase.entity.Status;
+import com.incubyte.dealership.purchase.repository.PurchaseRepository;
+import com.incubyte.dealership.purchase.service.PurchaseService;
 import com.incubyte.dealership.vehicle.entity.Vehicle;
 import com.incubyte.dealership.vehicle.repository.VehicleRepository;
 import org.junit.jupiter.api.Test;
@@ -10,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -37,8 +43,13 @@ public class PurchaseServiceTest {
 		UUID userId = UUID.randomUUID();
 		UUID vehicleId = UUID.randomUUID();
 
-		User user = new User();
-		user.setId(userId);
+		User user = User.builder()
+			.id(userId)
+			.username("aarya")
+			.email("aarya@gmail.com")
+			.role(Role.USER)
+			.createdAt(LocalDateTime.now())
+			.build();
 
 		Vehicle vehicle = new Vehicle();
 		vehicle.setId(vehicleId);
@@ -48,15 +59,18 @@ public class PurchaseServiceTest {
 
 		when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 		when(vehicleRepository.findById(vehicleId)).thenReturn(Optional.of(vehicle));
+		when(purchaseRepository.save(any(Purchase.class)))
+			.thenAnswer(invocation -> invocation.getArgument(0));
 
 		// Act
 		Purchase purchase = purchaseService.purchaseVehicle(userId, vehicleId);
 
 		// Assert
+		// Assert
 		assertNotNull(purchase);
-		assertEquals(userId, purchase.getUserId());
-		assertEquals(vehicleId, purchase.getVehicleId());
-		assertEquals("COMPLETED", purchase.getStatus());
+		assertEquals(userId, purchase.getUser().getId());  // ← Changed
+		assertEquals(vehicleId, purchase.getVehicle().getId());  // ← Changed
+		assertEquals(Status.COMPLETED, purchase.getStatus());  // ← Changed from "COMPLETED"
 		verify(vehicleRepository).save(vehicle);
 		assertEquals(4, vehicle.getQuantityInStock());
 	}
