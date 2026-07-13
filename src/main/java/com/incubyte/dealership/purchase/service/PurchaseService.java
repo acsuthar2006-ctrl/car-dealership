@@ -2,6 +2,7 @@ package com.incubyte.dealership.purchase.service;
 
 import com.incubyte.dealership.auth.entity.User;
 import com.incubyte.dealership.auth.repository.UserRepository;
+import com.incubyte.dealership.purchase.dto.PurchaseResponse;
 import com.incubyte.dealership.purchase.entity.Purchase;
 import com.incubyte.dealership.purchase.entity.Status;
 import com.incubyte.dealership.purchase.repository.PurchaseRepository;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -43,5 +45,20 @@ public class PurchaseService {
 			.build();
 
 		return purchaseRepository.save(purchase);
+	}
+
+	public List<PurchaseResponse> getUserPurchases(UUID userId) {
+		return purchaseRepository.findByUserId(userId)
+			.stream()
+			.map(purchase -> new PurchaseResponse(
+				purchase.getId(),
+				purchase.getVehicle().getMake(),
+				purchase.getVehicle().getModel(),
+				purchase.getVehicle().getCategory(),
+				purchase.getVehicle().getPrice(),
+				purchase.getPurchaseDate(),
+				purchase.getStatus()
+			))
+			.toList();
 	}
 }
