@@ -231,7 +231,7 @@ class VehicleControllerTest {
 	}
 
 	@Test
-	@WithMockUser
+	@WithMockUser(roles = "ADMIN")
 	void updateVehicle_withValidPayload_returns200Ok() throws Exception {
 		// ARRANGE
 		UUID id = UUID.randomUUID();
@@ -249,7 +249,7 @@ class VehicleControllerTest {
 	}
 
 	@Test
-	@WithMockUser
+	@WithMockUser(roles = "ADMIN")
 	void updateVehicle_withNonExistentId_returns404NotFound() throws Exception {
 		// ARRANGE
 		UUID nonExistentId = UUID.randomUUID();

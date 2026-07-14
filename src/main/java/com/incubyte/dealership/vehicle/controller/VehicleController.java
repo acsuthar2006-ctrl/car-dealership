@@ -3,12 +3,15 @@ package com.incubyte.dealership.vehicle.controller;
 import com.incubyte.dealership.vehicle.dto.RestockRequest;
 import com.incubyte.dealership.vehicle.dto.VehicleRequest;
 import com.incubyte.dealership.vehicle.dto.VehicleResponse;
+import com.incubyte.dealership.auth.entity.User;
+import com.incubyte.dealership.purchase.service.PurchaseService;
 import com.incubyte.dealership.vehicle.service.VehicleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +24,7 @@ import java.util.UUID;
 public class VehicleController {
 
     private final VehicleService vehicleService;
+    private final PurchaseService purchaseService;
 
     @PostMapping
     public ResponseEntity<VehicleResponse> addVehicle(@Valid @RequestBody VehicleRequest request) {
@@ -59,8 +63,17 @@ public class VehicleController {
     }
 
     @PostMapping("/{id}/purchase")
-    public ResponseEntity<VehicleResponse> purchaseVehicle(@PathVariable UUID id) {
-        return ResponseEntity.ok(vehicleService.purchaseVehicle(id));
+    public ResponseEntity<VehicleResponse> purchaseVehicle(@PathVariable UUID id, @AuthenticationPrincipal User user) {
+        var purchase = purchaseService.purchaseVehicle(user.getId(), id);
+        var vehicle = purchase.getVehicle();
+        return ResponseEntity.ok(new VehicleResponse(
+                vehicle.getId(),
+                vehicle.getMake(),
+                vehicle.getModel(),
+                vehicle.getCategory(),
+                vehicle.getPrice(),
+                vehicle.getQuantityInStock()
+        ));
     }
 
     @PostMapping("/{id}/restock")

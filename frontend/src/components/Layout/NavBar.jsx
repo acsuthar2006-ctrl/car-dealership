@@ -33,6 +33,9 @@ export const NavBar = () => {
           <Link to="/" className="nav-link">
             Storefront
           </Link>
+          <Link to="/purchases" className="nav-link">
+            My Garage
+          </Link>
           {isAdmin && (
             <Link to="/admin" className="nav-link">
               Admin Dashboard
