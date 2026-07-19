@@ -15,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.UUID;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -24,21 +26,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(value = AuthController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class RegisterControllerTest {
 
-	private static final String REGISTER_ENDPOINT = "/auth/register";
+    private static final String REGISTER_ENDPOINT = "/auth/register";
 
-	@Autowired
-	MockMvc mockMvc;
-	@Autowired
-	ObjectMapper objectMapper;
+    @Autowired
+    MockMvc mockMvc;
+    @Autowired
+    ObjectMapper objectMapper;
 
-	@MockitoBean
-	AuthService authService;
+    @MockitoBean
+    AuthService authService;
 
-	@MockitoBean
-	JwtService jwtService;
+    @MockitoBean
+    JwtService jwtService;
 
-	@MockitoBean
-	CustomUserDetailsService customUserDetailsService;
+    @MockitoBean
+    CustomUserDetailsService customUserDetailsService;
 
     @Test
     void register_withValidPayload_returns201AndUserWithoutPassword() throws Exception {
@@ -46,7 +48,7 @@ class RegisterControllerTest {
 
         // ARRANGE
         var request = new RegisterRequest("aarya", "aarya@test.com", "secret123");
-        var response = new AuthUserResponse(null, "aarya", "aarya@test.com");
+        var response = new AuthUserResponse(UUID.randomUUID(), "aarya", "aarya@test.com");
 
         when(authService.register(any())).thenReturn(response);
 
@@ -63,7 +65,8 @@ class RegisterControllerTest {
     void register_withDuplicateUsernameOrEmail_returns409() throws Exception {
         // ARRANGE
         var request = new RegisterRequest("aarya", "aarya@test.com", "secret123");
-        when(authService.register(any())).thenThrow(new org.springframework.dao.DataIntegrityViolationException("Duplicate key"));
+        when(authService.register(any()))
+                .thenThrow(new org.springframework.dao.DataIntegrityViolationException("Duplicate key"));
 
         // ACT + ASSERT
         mockMvc.perform(post(REGISTER_ENDPOINT)
@@ -76,13 +79,14 @@ class RegisterControllerTest {
     void register_withInvalidEmail_returns400() throws Exception {
         // ARRANGE
         var request = new RegisterRequest("aarya", "not-an-email", "secret123");
-		when(authService.register(any())).thenThrow(new org.springframework.dao.DataIntegrityViolationException("Invalid email"));
+        when(authService.register(any()))
+                .thenThrow(new org.springframework.dao.DataIntegrityViolationException("Invalid email"));
 
         // ACT + ASSERT
         mockMvc.perform(post(REGISTER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-	            .andExpect(jsonPath("$.email").exists()); // 400
+                .andExpect(jsonPath("$.email").exists()); // 400
     }
 }

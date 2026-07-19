@@ -1,6 +1,10 @@
 package com.incubyte.dealership.vehicle.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.incubyte.dealership.auth.entity.Role;
+import com.incubyte.dealership.auth.entity.User;
+import com.incubyte.dealership.purchase.entity.Purchase;
+import com.incubyte.dealership.vehicle.entity.Vehicle;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -16,7 +20,7 @@ import com.incubyte.dealership.vehicle.exception.VehicleNotFoundException;
 import com.incubyte.dealership.vehicle.service.VehicleService;
 import com.incubyte.dealership.shared.security.JwtService;
 import com.incubyte.dealership.shared.security.CustomUserDetailsService;
-
+import com.incubyte.dealership.purchase.service.PurchaseService;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +37,6 @@ import com.incubyte.dealership.shared.security.JwtFilterChain;
 
 @WebMvcTest(VehicleController.class)
 @Import({ SecurityConfig.class, JwtFilterChain.class })
-@WithMockUser
 class VehicleControllerTest {
 
 	private static final String VEHICLES_ENDPOINT = "/vehicles";
@@ -54,7 +57,11 @@ class VehicleControllerTest {
 	@MockitoBean
 	CustomUserDetailsService customUserDetailsService;
 
+	@MockitoBean
+	PurchaseService purchaseService;
+
 	@Test
+	@WithMockUser(roles = "ADMIN")
 	void addVehicle_withValidPayload_returns201Created() throws Exception {
 		// ARRANGE
 		var request = new VehicleRequest("Toyota", "Camry", "SEDAN", 25000.00, 1);
@@ -76,6 +83,7 @@ class VehicleControllerTest {
 	}
 
 	@Test
+	@WithMockUser(roles = "ADMIN")
 	void addVehicle_withDuplicateMakeAndModel_returns409Conflict() throws Exception {
 		// ARRANGE
 		var request = new VehicleRequest("Toyota", "Camry", "SEDAN", 25000.00, 1);
@@ -92,6 +100,7 @@ class VehicleControllerTest {
 	}
 
 	@Test
+	@WithMockUser(roles = "ADMIN")
 	void addVehicle_withNegativePrice_returns400BadRequest() throws Exception {
 		// ARRANGE
 		var request = new VehicleRequest("Toyota", "Camry", "SEDAN", -10000.0, 1);
@@ -104,6 +113,7 @@ class VehicleControllerTest {
 	}
 
 	@Test
+	@WithMockUser(roles = "ADMIN")
 	void addVehicle_withBlankStrings_returns400BadRequest() throws Exception {
 		// ARRANGE
 		var request = new VehicleRequest("", "", "", 25000.0, 1);
@@ -186,52 +196,82 @@ class VehicleControllerTest {
 	}
 
 	@Test
-	@WithMockUser
 	void purchaseVehicle_withAvailableStock_returns200AndDecreasesQuantity() throws Exception {
 		// ARRANGE
 		UUID vehicleId = UUID.randomUUID();
-		var response = new VehicleResponse(vehicleId, "Toyota", "Camry", "SEDAN", 25000.00, 4);
+		User mockUser = new User();
+		mockUser.setId(UUID.randomUUID());
+		mockUser.setUsername("testuser");
+		mockUser.setRole(Role.USER);
 
-		when(vehicleService.purchaseVehicle(vehicleId)).thenReturn(response);
+		Vehicle mockVehicle = new Vehicle();
+		mockVehicle.setId(vehicleId);
+		mockVehicle.setMake("Toyota");
+		mockVehicle.setModel("Camry");
+		mockVehicle.setCategory("SEDAN");
+		mockVehicle.setPrice(25000.00);
+		mockVehicle.setQuantityInStock(4);
+
+		var mockPurchase = Purchase.builder().vehicle(mockVehicle).build();
+
+		when(jwtService.getUsernameFromToken("mock-token")).thenReturn("testuser");
+		when(customUserDetailsService.loadUserByUsername("testuser")).thenReturn(mockUser);
+		when(jwtService.isTokenValid("mock-token", mockUser)).thenReturn(true);
+		when(purchaseService.purchaseVehicle(mockUser.getId(), vehicleId)).thenReturn(mockPurchase);
 
 		// ACT + ASSERT
-		mockMvc.perform(post(VEHICLES_ENDPOINT + "/" + vehicleId + "/purchase"))
+		mockMvc.perform(post(VEHICLES_ENDPOINT + "/" + vehicleId + "/purchase")
+				.header("Authorization", "Bearer mock-token"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.quantityInStock").value(4)); // Decreased from 5 to 4
 	}
 
 	@Test
-	@WithMockUser
 	void purchaseVehicle_withOutOfStock_returns409Conflict() throws Exception {
 		// ARRANGE
 		UUID vehicleId = UUID.randomUUID();
+		User mockUser = new User();
+		mockUser.setId(UUID.randomUUID());
+		mockUser.setUsername("testuser");
+		mockUser.setRole(Role.USER);
 
-		when(vehicleService.purchaseVehicle(vehicleId))
+		when(jwtService.getUsernameFromToken("mock-token")).thenReturn("testuser");
+		when(customUserDetailsService.loadUserByUsername("testuser")).thenReturn(mockUser);
+		when(jwtService.isTokenValid("mock-token", mockUser)).thenReturn(true);
+		when(purchaseService.purchaseVehicle(mockUser.getId(), vehicleId))
 				.thenThrow(new OutOfStockException(vehicleId));
 
 		// ACT + ASSERT
-		mockMvc.perform(post(VEHICLES_ENDPOINT + "/" + vehicleId + "/purchase"))
+		mockMvc.perform(post(VEHICLES_ENDPOINT + "/" + vehicleId + "/purchase")
+				.header("Authorization", "Bearer mock-token"))
 				.andExpect(status().isConflict())
 				.andExpect(jsonPath("$.error").exists());
 	}
 
 	@Test
-	@WithMockUser
 	void purchaseVehicle_withNonExistentId_returns404NotFound() throws Exception {
 		// ARRANGE
 		UUID nonExistentId = UUID.randomUUID();
+		User mockUser = new User();
+		mockUser.setId(UUID.randomUUID());
+		mockUser.setUsername("testuser");
+		mockUser.setRole(Role.USER);
 
-		when(vehicleService.purchaseVehicle(nonExistentId))
+		when(jwtService.getUsernameFromToken("mock-token")).thenReturn("testuser");
+		when(customUserDetailsService.loadUserByUsername("testuser")).thenReturn(mockUser);
+		when(jwtService.isTokenValid("mock-token", mockUser)).thenReturn(true);
+		when(purchaseService.purchaseVehicle(mockUser.getId(), nonExistentId))
 				.thenThrow(new VehicleNotFoundException(nonExistentId));
 
 		// ACT + ASSERT
-		mockMvc.perform(post(VEHICLES_ENDPOINT + "/" + nonExistentId + "/purchase"))
+		mockMvc.perform(post(VEHICLES_ENDPOINT + "/" + nonExistentId + "/purchase")
+				.header("Authorization", "Bearer mock-token"))
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$.error").exists());
 	}
 
 	@Test
-	@WithMockUser
+	@WithMockUser(roles = "ADMIN")
 	void updateVehicle_withValidPayload_returns200Ok() throws Exception {
 		// ARRANGE
 		UUID id = UUID.randomUUID();
@@ -249,7 +289,7 @@ class VehicleControllerTest {
 	}
 
 	@Test
-	@WithMockUser
+	@WithMockUser(roles = "ADMIN")
 	void updateVehicle_withNonExistentId_returns404NotFound() throws Exception {
 		// ARRANGE
 		UUID nonExistentId = UUID.randomUUID();

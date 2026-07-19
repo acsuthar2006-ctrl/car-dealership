@@ -12,6 +12,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { ProtectedRoute } from "./components/Auth/ProtectedRoute";
 import { AuthPage } from "./pages/AuthPage";
 import { HomePage } from "./pages/HomePage";
+import { PurchasesPage } from "./pages/PurchasesPage";
 import { AdminPage } from "./pages/AdminPage";
 import { Layout } from "./components/Layout/Layout";
 
@@ -27,6 +28,7 @@ function App() {
           <Route element={<Layout />}>
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<HomePage />} />
+              <Route path="/purchases" element={<PurchasesPage />} />
             </Route>
 
             {/* Admin Routes */}

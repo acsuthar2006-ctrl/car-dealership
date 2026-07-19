@@ -33,7 +33,7 @@ class LoginControllerTest {
 
     @MockitoBean
     AuthService authService;
-    
+
     @MockitoBean
     JwtService jwtService;
 
